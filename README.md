@@ -68,6 +68,15 @@ Seus dados são salvos automaticamente no `localStorage` do navegador.
 
 ### Modo demo — para visitantes
 
+## 🛠️ Planos de Estudos
+
+Deixei algumas ideias de Planos de estudos para usar como testes ou aplicar, na pasta de [Plano de estudos](/Planos%20de%20Etudos)
+
+- Você também pode criar sus planos de estudos manualmente;
+- Gerar um noovo com a IA;
+- Exportar os seus planos, nas configurações;
+- Importar planos externos, arquivo precisa estar em `.json`;
+
 
 ## 🛠️ Tecnologias Utilizadas
 
