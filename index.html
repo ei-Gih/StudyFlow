@@ -815,8 +815,85 @@ function saveSettings(){const n=document.getElementById('set-name')?.value.trim(
 function savePomoDurations(){if(!DB.prefs)DB.prefs={};DB.prefs.focusMins=parseInt(document.getElementById('set-focus').value)||25;DB.prefs.shortMins=parseInt(document.getElementById('set-short').value)||5;DB.prefs.longMins=parseInt(document.getElementById('set-long').value)||15;save();pomodoroReset();showToast('Durações atualizadas!','green');}
 function updateRangeLabel(k,v){const l=document.getElementById('lbl-'+k);if(l)l.textContent=v;}
 function toggleTheme(b){document.body.classList.toggle('light',b);if(!DB.prefs)DB.prefs={};DB.prefs.light=b;save();}
-function exportData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));a.download=`studyflow-${tStr()}.json`;a.click();showToast('Exportado!','green');}
-function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.plans&&d.tasks){Object.assign(DB,d);save();location.reload();}else showToast('Arquivo inválido','red');}catch(e){showToast('Erro ao importar','red');}};r.readAsText(f);}
+function exportData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));a.download=`studyflow-${tStr()}.json`;a.click();showToast('Backup completo exportado!','green');}
+
+function importData(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!d.plans||!d.tasks){showToast('Arquivo inválido','red');return;}
+
+      // Detectar se é um backup completo (tem user/prefs) ou apenas um plano
+      const isFullBackup=!!(d.user&&d.prefs);
+
+      if(isFullBackup){
+        // Perguntar ao usuário o que deseja fazer
+        openImportModal(d);
+      } else {
+        // Arquivo só tem planos/módulos/etc — sempre faz merge
+        mergeImport(d);
+      }
+    }catch(err){showToast('Erro ao ler o arquivo','red');}
+  };
+  r.readAsText(f);
+  inp.value=''; // reset input para permitir reimportar o mesmo arquivo
+}
+
+function openImportModal(d){
+  const planNames=(d.plans||[]).map(p=>`<span style="display:inline-block;background:var(--bg4);border-radius:6px;padding:2px 8px;font-size:11px;margin:2px">${p.title}</span>`).join('');
+  // Usar o modal existente
+  document.getElementById('modal-title').textContent='📥 Importar dados';
+  document.getElementById('modal-body').innerHTML=`
+    <div style="font-size:13px;color:var(--text2);margin-bottom:12px">
+      O arquivo contém <strong style="color:var(--text)">${(d.plans||[]).length} plano(s)</strong>:
+    </div>
+    <div style="margin-bottom:16px;line-height:2">${planNames}</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn btn-primary" onclick="mergeImport(window._importData);closeModal()" style="justify-content:flex-start;gap:10px">
+        <span style="font-size:16px">➕</span>
+        <div style="text-align:left"><div style="font-weight:600">Adicionar aos meus dados</div><div style="font-size:11px;opacity:.7">Mantém seus planos existentes e adiciona os novos</div></div>
+      </button>
+      <button class="btn btn-danger" onclick="if(confirm('Isso apaga TODOS os seus dados atuais. Tem certeza?')){fullImport(window._importData);closeModal()}" style="justify-content:flex-start;gap:10px">
+        <span style="font-size:16px">🔄</span>
+        <div style="text-align:left"><div style="font-weight:600">Substituir tudo</div><div style="font-size:11px;opacity:.7">Apaga seus dados atuais e carrega o backup completo</div></div>
+      </button>
+    </div>`;
+  // Esconder botão salvar padrão
+  document.querySelector('.modal-actions').style.display='none';
+  window._importData=d;
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function mergeImport(d){
+  // Merge inteligente — adiciona apenas itens com IDs novos
+  const arrays=['plans','modules','topics','tasks','flashcards','reviews','sessions'];
+  arrays.forEach(key=>{
+    const existing=new Set((DB[key]||[]).map(x=>x.id));
+    (d[key]||[]).forEach(item=>{
+      if(!existing.has(item.id)) DB[key].push(item);
+    });
+  });
+  // Merge de notas (objeto chave-valor)
+  if(d.notes) Object.assign(DB.notes, d.notes);
+  // Merge de activityLog
+  if(d.activityLog) d.activityLog.forEach(date=>{if(!DB.activityLog.includes(date))DB.activityLog.push(date);});
+  // Merge de conquistas
+  if(d.achievements) d.achievements.forEach(a=>{if(!DB.achievements.includes(a))DB.achievements.push(a);});
+
+  save();
+  showToast(`✅ ${(d.plans||[]).length} plano(s) adicionado(s) com sucesso!`,'green');
+  setTimeout(()=>location.reload(),1200);
+}
+
+function fullImport(d){
+  Object.assign(DB,d);
+  save();
+  showToast('Backup completo restaurado!','green');
+  setTimeout(()=>location.reload(),1000);
+}
+
 function resetData(){localStorage.removeItem(SKEY);location.reload();}
 
 /* ═══ MODAL ═══ */
@@ -829,7 +906,7 @@ function openModal(type){
   document.getElementById('modal-bg').classList.add('open');
   setTimeout(()=>document.querySelector('.modal input,.modal textarea')?.focus(),50);
 }
-function closeModal(){document.getElementById('modal-bg').classList.remove('open');}
+function closeModal(){document.getElementById("modal-bg").classList.remove("open");const ma=document.querySelector(".modal-actions");if(ma)ma.style.display="";window._importData=null;}
 function buildMB(t){
   if(t==='plan')return`<div class="field"><label>Título *</label><input id="m-title" placeholder="Ex: Desenvolvimento Web"/></div><div class="field"><label>Descrição</label><textarea id="m-desc" rows="2" placeholder="Opcional"></textarea></div><div class="field"><label>Cor</label><input type="color" id="m-color" value="#6c8eff" style="height:34px;padding:3px;cursor:pointer"/></div>`;
   if(t==='module'){const o=DB.plans.map(p=>`<option value="${p.id}">${p.title}</option>`).join('');return !DB.plans.length?'<p style="color:var(--text2)">Crie um plano primeiro.</p>':`<div class="field"><label>Plano *</label><select id="m-plan">${o}</select></div><div class="field"><label>Nome *</label><input id="m-title" placeholder="Ex: HTML & CSS"/></div>`;}
