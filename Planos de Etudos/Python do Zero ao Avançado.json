@@ -1,0 +1,28 @@
+{
+  "plans": [
+    { "id": "plan_python", "title": "Python do Zero ao Avançado", "color": "#4caf50" }
+  ],
+  "modules": [
+    { "id": "pm1", "planId": "plan_python", "title": "Fundamentos" },
+    { "id": "pm2", "planId": "plan_python", "title": "Estruturas" },
+    { "id": "pm3", "planId": "plan_python", "title": "Funções e Módulos" },
+    { "id": "pm4", "planId": "plan_python", "title": "Projetos" }
+  ],
+  "topics": [
+    { "id": "pt1", "moduleId": "pm1", "title": "Variáveis e tipos" },
+    { "id": "pt2", "moduleId": "pm1", "title": "Entrada e saída" },
+    { "id": "pt3", "moduleId": "pm2", "title": "If/Else" },
+    { "id": "pt4", "moduleId": "pm2", "title": "Loops" },
+    { "id": "pt5", "moduleId": "pm3", "title": "Funções" },
+    { "id": "pt6", "moduleId": "pm3", "title": "Listas e dicionários" },
+    { "id": "pt7", "moduleId": "pm4", "title": "Projeto CLI" },
+    { "id": "pt8", "moduleId": "pm4", "title": "Projeto real" }
+  ],
+  "tasks": [
+    { "id": "ptask1", "topicId": "pt1", "title": "Criar variáveis", "done": false },
+    { "id": "ptask2", "topicId": "pt3", "title": "Criar verificador de número", "done": false },
+    { "id": "ptask3", "topicId": "pt4", "title": "Tabuada com loop", "done": false },
+    { "id": "ptask4", "topicId": "pt5", "title": "Criar funções simples", "done": false },
+    { "id": "ptask5", "topicId": "pt8", "title": "Criar projeto completo", "done": false }
+  ]
+}

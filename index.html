@@ -1,223 +1,200 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>StudyFlow</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0c0e14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#222636;--border:#2a2f42;--border2:#353b52;--text:#e8eaf0;--text2:#8b91a8;--text3:#555c75;--accent:#6c8eff;--accent2:#3d5fff;--green:#22d3a0;--amber:#f5a623;--red:#ff5f5f;--pink:#ff6eb4;--purple:#a78bfa;--r:10px;--r2:14px;--r3:18px}
-body.light{--bg:#f4f5f7;--bg2:#ffffff;--bg3:#f0f1f4;--bg4:#e8eaef;--border:#e0e3ec;--border2:#cdd0dc;--text:#1a1d2e;--text2:#5a6080;--text3:#9ba3bf}
-html,body{height:100%}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;transition:background .3s,color .3s}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-#sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;gap:2px;z-index:10;transition:background .3s,border-color .3s}
-.logo{padding:0 20px 20px;font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);margin-bottom:8px}
-.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-size:13.5px;font-weight:400;color:var(--text2);transition:all .15s;position:relative;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
-.nav-item:hover{color:var(--text);background:var(--bg3)}.nav-item.active{color:var(--accent);background:rgba(108,142,255,.08);font-weight:500}
-.nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);border-radius:0 2px 2px 0}
-.nav-icon{width:16px;height:16px;opacity:.6;flex-shrink:0}.nav-item.active .nav-icon{opacity:1}
-.sidebar-section{padding:18px 20px 5px;font-size:9.5px;font-weight:700;letter-spacing:.09em;color:var(--text3);text-transform:uppercase}
-.sidebar-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:14px}
-.user-chip{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer}
-.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
-.user-info{flex:1;min-width:0}.user-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.user-level{font-size:11px;color:var(--text2)}
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);transition:background .3s}
-.topbar{height:54px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:10px;background:var(--bg);flex-shrink:0;transition:background .3s,border-color .3s}
-.topbar-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;flex:1;letter-spacing:-.3px}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
-.badge-fire{background:rgba(245,166,35,.12);color:var(--amber)}.badge-xp{background:rgba(108,142,255,.12);color:var(--accent)}.badge-green{background:rgba(34,211,160,.12);color:var(--green)}.badge-red{background:rgba(255,95,95,.12);color:var(--red)}
-.page-content{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px}
-.page{display:none}.page.active{display:flex;flex-direction:column;gap:20px}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}.page.active{animation:fadeIn .18s ease}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:18px;transition:background .3s,border-color .3s}
-.card-title{font-family:'Syne',sans-serif;font-size:11.5px;font-weight:700;color:var(--text2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;display:flex;flex-direction:column;gap:5px;transition:background .3s;position:relative;overflow:hidden}
-.metric::after{content:'';position:absolute;inset:0;opacity:.03;pointer-events:none}
-.metric-label{font-size:10.5px;color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase}.metric-value{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1}.metric-sub{font-size:11px;color:var(--text2)}
-.prog-bar{height:4px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:4px}.prog-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="/Imagens/study.png" />
+  <title>StudyFlow — Gerencie seus estudos com inteligência</title>
+  <meta name="description" content="Plataforma completa de gestão de estudos com Pomodoro, Flashcards, Analytics e Gamificação. Sem cadastro, zero backend."/>
 
-/* PRIORITY BADGES */
-.prio{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:6px;font-size:10px;font-weight:600;letter-spacing:.03em;flex-shrink:0}
-.prio-alta{background:rgba(255,95,95,.15);color:#ff5f5f}
-.prio-media{background:rgba(245,166,35,.15);color:#f5a623}
-.prio-baixa{background:rgba(34,211,160,.15);color:#22d3a0}
+  <!-- Fontes -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 
-/* TASKS */
-.task-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg3);border-radius:var(--r);border:1px solid transparent;transition:all .15s;cursor:pointer}
-.task-item:hover{border-color:var(--border)}.task-check{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;background:transparent;cursor:pointer}
-.task-check.done{background:var(--green);border-color:var(--green)}.task-check svg{display:none}.task-check.done svg{display:block}
-.task-text{flex:1;font-size:13px}.task-item.done .task-text{text-decoration:line-through;color:var(--text3)}.task-mins{font-size:11px;color:var(--text3);flex-shrink:0}
-.task-xp{font-size:10px;color:var(--accent);background:rgba(108,142,255,.1);padding:1px 6px;border-radius:8px;flex-shrink:0}
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/styles.css"/>
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r);font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:all .15s;font-family:'DM Sans',sans-serif}
-.btn:hover{background:var(--bg4);border-color:var(--text3)}.btn-primary{background:var(--accent2);border-color:var(--accent2);color:#fff}.btn-primary:hover{background:var(--accent);border-color:var(--accent)}
-.btn-danger{background:rgba(255,95,95,.08);border-color:rgba(255,95,95,.3);color:var(--red)}.btn-danger:hover{background:rgba(255,95,95,.16)}
-.btn-sm{padding:4px 10px;font-size:11.5px}.btn-icon{width:28px;height:28px;padding:0;justify-content:center}
-
-/* POMODORO */
-.pomodoro-ring{position:relative;width:196px;height:196px;margin:0 auto}.pomodoro-ring svg{transform:rotate(-90deg)}
-.pomo-ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
-.pomo-time{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;line-height:1;letter-spacing:-2px}.pomo-phase{font-size:11.5px;color:var(--text2);margin-top:4px}
-.pomo-controls{display:flex;gap:8px;justify-content:center;margin-top:18px}
-.pomo-dots{display:flex;gap:5px;justify-content:center;margin-top:12px}
-.pomo-dot{width:7px;height:7px;border-radius:50%;background:var(--border2)}.pomo-dot.done{background:var(--accent)}.pomo-dot.active{background:var(--green)}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}.pomo-running .pomo-time{animation:pulse 1s ease-in-out infinite}
-
-/* FOCUS OVERLAY */
-#focus-overlay{display:none;position:fixed;inset:0;z-index:500;background:#050608;flex-direction:column;align-items:center;justify-content:center;gap:20px}
-#focus-overlay.open{display:flex}
-.fp{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.particle{position:absolute;border-radius:50%;opacity:0;animation:floatUp 6s ease-in infinite}
-@keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}20%{opacity:.4}80%{opacity:.2}100%{transform:translateY(-10vh) scale(1);opacity:0}}
-.focus-time{font-family:'Syne',sans-serif;font-size:76px;font-weight:800;letter-spacing:-4px;color:#fff;position:relative;z-index:1}
-.focus-lbl{font-size:14px;color:rgba(255,255,255,.35);letter-spacing:.2em;text-transform:uppercase;position:relative;z-index:1}
-.focus-topic{font-size:13px;color:rgba(255,255,255,.25);margin-top:2px;position:relative;z-index:1}
-.focus-exit{position:absolute;top:22px;right:22px;cursor:pointer;color:rgba(255,255,255,.25);font-size:12px;z-index:1;transition:color .2s}.focus-exit:hover{color:rgba(255,255,255,.6)}
-.f-ring{position:absolute;border-radius:50%;border:1px solid rgba(108,142,255,.15);animation:breathe 4s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.08);opacity:.9}}
-
-/* FC */
-.fc-wrap{perspective:1000px;width:100%;max-width:460px;margin:0 auto;height:210px;cursor:pointer}
-.fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s ease}
-.fc-wrap.flipped .fc-inner{transform:rotateY(180deg)}
-.fc-face{position:absolute;inset:0;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;text-align:center}
-.fc-back{transform:rotateY(180deg);background:var(--bg4)}.fc-label{font-size:9.5px;font-weight:700;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}.fc-text{font-size:16px;font-weight:500;line-height:1.5}.fc-hint{font-size:11px;color:var(--text3);margin-top:8px}.fc-diff{display:flex;gap:8px;justify-content:center;margin-top:14px}
-
-/* FC TAGS */
-.fc-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(108,142,255,.12);color:var(--accent);cursor:pointer;transition:background .15s}
-.fc-tag:hover{background:rgba(108,142,255,.22)}.fc-tag.active{background:var(--accent2);color:#fff}
-
-/* CAL */
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:11.5px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;position:relative}
-.cal-day:hover{background:var(--bg3);border-color:var(--border)}.cal-day.today{background:rgba(108,142,255,.15);border-color:var(--accent);color:var(--accent)}
-.cal-day.has-session::after{content:'';position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:var(--green)}.cal-day.other-month{color:var(--text3)}
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.cal-weekday{font-size:9.5px;font-weight:700;color:var(--text3);text-align:center;letter-spacing:.05em;text-transform:uppercase}
-.chart-box{height:190px;position:relative}
-
-/* STREAK MINI CALENDAR */
-.streak-mini{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:4px}
-.sm-day{width:100%;aspect-ratio:1;border-radius:3px;background:var(--bg4);transition:background .2s}
-.sm-day.active{background:var(--green)}.sm-day.today-dot{border:1.5px solid var(--accent)}
-
-/* MODAL */
-#modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;align-items:center;justify-content:center}
-#modal-bg.open{display:flex}.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:26px;width:460px;max-width:95vw;display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow-y:auto;transition:background .3s}
-.modal-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
-.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:11.5px;font-weight:600;color:var(--text2)}
-.field input,.field textarea,.field select{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;color:var(--text);font-size:13px;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .15s;resize:vertical}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}.field input::placeholder,.field textarea::placeholder{color:var(--text3)}.field select option{background:var(--bg2)}
-
-/* XP BAR */
-.xp-bar-wrap{padding:12px 14px;background:var(--bg3);border-radius:var(--r)}
-.xp-bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.xp-level{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}.xp-pts{font-size:11px;color:var(--text2)}
-.xp-track{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--purple));border-radius:3px;transition:width .6s}
-
-/* ACHIEVEMENTS */
-.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
-.ach-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);text-align:center;transition:all .2s;position:relative;overflow:hidden}
-.ach-item.locked{opacity:.3}.ach-item.unlocked{border-color:var(--amber)}.ach-item.unlocked::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(245,166,35,.1),transparent 60%)}
-.ach-icon{font-size:20px}.ach-name{font-size:9.5px;font-weight:600;line-height:1.3}
-
-/* SUGGESTION */
-.suggestion{display:flex;align-items:flex-start;gap:10px;padding:12px;background:rgba(108,142,255,.06);border:1px solid rgba(108,142,255,.18);border-radius:var(--r2)}
-.sug-icon{width:34px;height:34px;border-radius:9px;flex-shrink:0;background:rgba(108,142,255,.14);display:flex;align-items:center;justify-content:center;font-size:16px}
-.sug-title{font-size:12.5px;font-weight:600;color:var(--accent)}.sug-text{font-size:12px;color:var(--text2);margin-top:2px}
-
-/* MODULE TREE */
-.module-tree{display:flex;flex-direction:column;gap:7px}
-.mod-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.mod-header{display:flex;align-items:center;gap:9px;padding:11px 13px;cursor:pointer;transition:background .15s}.mod-header:hover{background:var(--bg4)}
-.mod-arrow{font-size:9px;color:var(--text3);transition:transform .2s;flex-shrink:0}.mod-item.open .mod-arrow{transform:rotate(90deg)}.mod-name{font-size:13px;font-weight:500;flex:1}
-.mod-topics{padding:0 13px 11px;display:flex;flex-direction:column;gap:5px}.mod-item:not(.open) .mod-topics{display:none}
-.topic-item{display:flex;align-items:center;gap:8px;padding:7px 9px;background:var(--bg4);border-radius:8px;border:1px solid transparent;transition:border-color .15s;cursor:pointer}
-.topic-item:hover{border-color:var(--border2)}.topic-icon{font-size:13px}.topic-name{font-size:12.5px;flex:1}.topic-count{font-size:11px;color:var(--text3)}
-.topic-mins{font-size:10px;color:var(--accent);background:rgba(108,142,255,.1);padding:1px 6px;border-radius:6px}
-
-/* NOTES */
-.notes-area{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:9px 11px;color:var(--text);font-size:12.5px;font-family:'DM Sans',sans-serif;resize:none;outline:none;line-height:1.6;min-height:72px;transition:border-color .2s}.notes-area:focus{border-color:var(--accent)}
-
-/* INLINE EDIT */
-.editable{cursor:text;border-radius:4px;padding:1px 3px;transition:background .15s}.editable:hover{background:rgba(255,255,255,.05)}
-input.inline-edit{background:var(--bg3);border:1px solid var(--accent);border-radius:4px;padding:1px 6px;color:var(--text);font-size:inherit;font-weight:inherit;font-family:inherit;outline:none;width:100%}
-
-/* ANALYTICS */
-.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.streak-row{display:flex;gap:3px;flex-wrap:wrap}
-.streak-day{width:13px;height:13px;border-radius:3px;background:var(--bg4);cursor:default}.streak-day.active{background:var(--green)}.streak-day.partial{background:rgba(34,211,160,.35)}
-.hour-bars{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;height:56px;align-items:end}
-.hour-bar{background:rgba(108,142,255,.08);border-radius:2px 2px 0 0;min-height:2px;cursor:default;transition:background .2s}.hour-bar:hover{background:var(--accent)}
-
-/* TOPIC TIME TABLE */
-.topic-time-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:8px}
-.tt-name{flex:1;font-size:12.5px}.tt-bar{flex:2;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}.tt-fill{height:100%;background:var(--accent);border-radius:2px}.tt-time{font-size:11px;color:var(--text2);min-width:40px;text-align:right}
-
-/* SEARCH */
-#search-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;align-items:flex-start;justify-content:center;padding-top:110px}
-#search-overlay.open{display:flex}
-.search-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);width:520px;max-width:95vw;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
-.search-input{width:100%;background:transparent;border:none;padding:15px 18px;font-size:14px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}.search-input::placeholder{color:var(--text3)}
-.search-divider{height:1px;background:var(--border)}.search-results{max-height:340px;overflow-y:auto}
-.search-result{display:flex;align-items:center;gap:11px;padding:10px 18px;cursor:pointer;transition:background .1s;font-size:13px}.search-result:hover{background:var(--bg3)}
-.search-result-icon{font-size:15px;flex-shrink:0}.search-result-label{flex:1}.search-result-type{font-size:10.5px;color:var(--text3)}.search-empty{padding:22px;text-align:center;font-size:13px;color:var(--text3)}
-
-/* MINI POMO */
-#mini-pomo{display:none;position:fixed;bottom:18px;right:18px;z-index:200;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);padding:10px 14px;box-shadow:0 6px 24px rgba(0,0,0,.4);cursor:pointer;transition:all .2s;align-items:center;gap:10px}
-#mini-pomo.visible{display:flex}#mini-pomo:hover{transform:translateY(-2px)}
-.mini-time{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;letter-spacing:-1px}.mini-ph{font-size:9.5px;color:var(--text3)}
-.mini-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}.mini-dot.run{animation:blink 1s ease-in-out infinite}
-
-/* CONFETTI */
-#confetti-canvas{position:fixed;inset:0;z-index:400;pointer-events:none}
-
-/* QUICK CHECKLIST */
-.quick-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;transition:background .1s}
-.quick-item:hover{background:var(--bg3)}.quick-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
-.quick-check.done{background:var(--green);border-color:var(--green)}.quick-check svg{display:none}.quick-check.done svg{display:block}
-.quick-text{font-size:12.5px;flex:1}.quick-item.done .quick-text{text-decoration:line-through;color:var(--text3)}
-.quick-prio-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-
-/* ESTIMATE BADGE */
-.estimate{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:7px;font-size:11px;font-weight:500;background:rgba(167,139,250,.12);color:var(--purple)}
-
-/* SETTINGS */
-.settings-section{display:flex;flex-direction:column;gap:14px}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border)}
-.setting-label{font-size:13.5px;font-weight:500}.setting-desc{font-size:11.5px;color:var(--text2);margin-top:1px}
-.toggle-wrap{position:relative;width:38px;height:21px;flex-shrink:0}.toggle-wrap input{opacity:0;width:0;height:0;position:absolute}
-.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:11px;transition:.25s;cursor:pointer}
-.toggle-slider::before{content:'';position:absolute;height:15px;width:15px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.25s}
-.toggle-wrap input:checked+.toggle-slider{background:var(--accent2)}.toggle-wrap input:checked+.toggle-slider::before{transform:translateX(17px)}
-.range-row{display:flex;align-items:center;gap:10px}.range-row input[type=range]{flex:1;accent-color:var(--accent)}.range-val{font-size:12.5px;font-weight:700;color:var(--accent);min-width:28px;text-align:right}
-
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:36px;text-align:center}.empty-icon{font-size:36px;opacity:.35}.empty-text{font-size:13.5px;color:var(--text2)}
-
-/* TOAST */
-#toast{position:fixed;bottom:24px;right:24px;z-index:600;display:flex;flex-direction:column;gap:7px}
-.toast-item{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);font-size:12.5px;font-weight:500;animation:toastIn .22s ease;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
-.toast-item.green{border-color:var(--green);color:var(--green)}.toast-item.amber{border-color:var(--amber);color:var(--amber)}.toast-item.accent{border-color:var(--accent);color:var(--accent)}.toast-item.red{border-color:var(--red);color:var(--red)}.toast-item.purple{border-color:var(--purple);color:var(--purple)}
-
-/* PLAN ITEM */
-.plan-item{display:flex;flex-direction:column;gap:7px;padding:12px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);transition:border-color .15s;cursor:pointer}.plan-item:hover{border-color:var(--border2)}
-.plan-header{display:flex;align-items:center;gap:9px}.plan-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}.plan-name{font-size:13.5px;font-weight:500;flex:1}.plan-pct{font-size:12px;font-weight:600;color:var(--text2)}
-
-@media(max-width:900px){#sidebar{width:52px}.logo span,.nav-item span,.sidebar-section,.user-info{display:none}.nav-item{justify-content:center;padding:10px}.user-chip{justify-content:center;padding:10px 0}.metrics{grid-template-columns:1fr 1fr}.analytics-grid{grid-template-columns:1fr}}
-@media(max-width:600px){.metrics{grid-template-columns:1fr 1fr}.page-content{padding:14px}}
-</style>
+  <!-- Chart.js (biblioteca de gráficos) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
-<!-- FOCUS OVERLAY -->
+<!-- ══════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════ -->
+<div id="landing">
+
+  <!-- Navbar -->
+  <nav class="lp-nav">
+    <div class="lp-logo">
+      <div class="lp-logo-icon">📚</div>
+      StudyFlow
+    </div>
+    <div class="lp-nav-links">
+      <a href="#features">Funcionalidades</a>
+      <a href="#como-funciona">Como funciona</a>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="lp-btn lp-btn-outline" onclick="enterApp(false)">Ver demo</button>
+      <button class="lp-btn lp-btn-primary" onclick="enterApp(true)">Usar agora →</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="lp-hero">
+    <div class="hero-badge">⚡ Zero cadastro • Zero backend • 100% no browser</div>
+    <h1 class="hero-title">Estude com foco.<br/>Revise com inteligência.</h1>
+    <p class="hero-sub">Plataforma completa de gestão de estudos com Pomodoro, Flashcards com revisão espaçada, Analytics e Gamificação — tudo em um único arquivo HTML.</p>
+    <div class="hero-cta">
+      <button class="lp-btn lp-btn-primary" style="padding:13px 28px;font-size:15px" onclick="enterApp(true)">🚀 Começar agora — é grátis</button>
+      <button class="lp-btn lp-btn-outline" style="padding:13px 28px;font-size:15px" onclick="enterApp(false)">Ver demonstração</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-n">7</div><div class="hero-stat-l">módulos do app</div></div>
+      <div class="hero-stat"><div class="hero-stat-n">12</div><div class="hero-stat-l">conquistas</div></div>
+      <div class="hero-stat"><div class="hero-stat-n">0</div><div class="hero-stat-l">dependências de servidor</div></div>
+      <div class="hero-stat"><div class="hero-stat-n">&lt;60KB</div><div class="hero-stat-l">tamanho do app</div></div>
+    </div>
+  </section>
+
+  <!-- Preview / Demo Window -->
+  <div class="lp-preview" id="features">
+    <div style="text-align:center;margin-bottom:36px">
+      <div class="section-label">Preview</div>
+      <div class="section-title">Tudo que você precisa<br/>em um só lugar</div>
+    </div>
+    <div class="preview-window">
+      <div class="preview-bar">
+        <div class="preview-dot" style="background:#ff5f5f"></div>
+        <div class="preview-dot" style="background:#f5a623"></div>
+        <div class="preview-dot" style="background:#22d3a0"></div>
+        <div style="margin-left:12px;font-size:11px;color:var(--text3)">studyflow.netlify.app</div>
+      </div>
+      <div class="preview-metrics">
+        <div class="preview-metric">
+          <div class="pm-label">Progresso geral</div>
+          <div class="pm-value" style="color:#6c8eff">68%</div>
+          <div class="pm-sub">34 de 50 tarefas</div>
+          <div class="pm-bar"><div class="pm-fill" style="width:68%;background:#6c8eff"></div></div>
+        </div>
+        <div class="preview-metric">
+          <div class="pm-label">Tempo hoje</div>
+          <div class="pm-value" style="color:#22d3a0">2h30</div>
+          <div class="pm-sub">6 pomodoros</div>
+          <div class="pm-bar"><div class="pm-fill" style="width:75%;background:#22d3a0"></div></div>
+        </div>
+        <div class="preview-metric">
+          <div class="pm-label">Streak</div>
+          <div class="pm-value" style="color:#f5a623">12 dias</div>
+          <div class="pm-sub">🔥 Continue assim!</div>
+          <div class="pm-bar"><div class="pm-fill" style="width:40%;background:#f5a623"></div></div>
+        </div>
+        <div class="preview-metric">
+          <div class="pm-label">XP total</div>
+          <div class="pm-value" style="color:#a78bfa">1.340</div>
+          <div class="pm-sub">Nível 14 ⚡</div>
+          <div class="pm-bar"><div class="pm-fill" style="width:40%;background:#a78bfa"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="lp-features">
+    <div class="section-label">Funcionalidades</div>
+    <div class="section-title">Tudo o que um estudante<br/>sério precisa</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(108,142,255,.12)">📋</div>
+        <div class="feature-title">Planejador hierárquico</div>
+        <div class="feature-desc">Organize estudos em Plano → Módulo → Tópico → Tarefa com prioridades e estimativas de tempo.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(34,211,160,.12)">⏱️</div>
+        <div class="feature-title">Timer Pomodoro completo</div>
+        <div class="feature-desc">Ciclos 25/5/15min com anel SVG animado, modo foco imersivo e mini widget flutuante.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(167,139,250,.12)">🃏</div>
+        <div class="feature-title">Flashcards com SRS</div>
+        <div class="feature-desc">Revisão espaçada inteligente. O algoritmo calcula automaticamente quando revisar cada card.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(245,166,35,.12)">📊</div>
+        <div class="feature-title">Analytics em tempo real</div>
+        <div class="feature-desc">Heatmap de atividade, gráficos de tempo por tópico, progresso por plano e muito mais.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,95,95,.12)">🎮</div>
+        <div class="feature-title">Gamificação completa</div>
+        <div class="feature-desc">XP com prioridade, 12 conquistas, streak diário e confetti ao completar módulos.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(34,211,160,.12)">💾</div>
+        <div class="feature-title">Zero backend</div>
+        <div class="feature-desc">Dados no localStorage. Export/Import JSON. Funciona offline. Privacidade total — nenhum dado sai do seu browser.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Como funciona -->
+  <div class="lp-how" id="como-funciona">
+    <div class="how-inner">
+      <div class="section-label" style="text-align:center">Como funciona</div>
+      <div class="section-title">Simples de usar,<br/>poderoso por dentro</div>
+      <div class="steps">
+        <div>
+          <div class="step-num">01</div>
+          <div class="step-title">Crie seu plano</div>
+          <div class="step-desc">Monte sua estrutura de estudos em poucos cliques. Plano → Módulos → Tópicos → Tarefas com prioridade.</div>
+        </div>
+        <div>
+          <div class="step-num">02</div>
+          <div class="step-title">Execute com Pomodoro</div>
+          <div class="step-desc">Estude em ciclos focados. O app rastreia quanto tempo você investe em cada tópico automaticamente.</div>
+        </div>
+        <div>
+          <div class="step-num">03</div>
+          <div class="step-title">Revise com SRS</div>
+          <div class="step-desc">Flashcards com revisão espaçada garantem que o que você aprende realmente fica na memória.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Final -->
+  <div class="lp-cta">
+    <div class="cta-box">
+      <div class="section-label" style="text-align:center">Pronto para começar?</div>
+      <h2 class="section-title" style="text-align:center">Seu estudo mais organizado<br/>começa agora</h2>
+      <p style="font-size:14px;color:var(--text2);margin:0 auto 32px;text-align:center">Sem cadastro. Sem instalação. Abre o app e começa.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="lp-btn lp-btn-primary" style="padding:14px 32px;font-size:15px" onclick="enterApp(true)">🚀 Começar agora</button>
+        <button class="lp-btn lp-btn-outline" style="padding:14px 32px;font-size:15px" onclick="enterApp(false)">Ver demo primeiro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="lp-footer">
+    <div class="lp-footer-text">© 2026 StudyFlow — Feito com 💙 para estudantes sérios</div>
+    <div class="lp-footer-text">Single-file HTML · Zero backend · Open Source</div>
+  </footer>
+
+</div><!-- /landing -->
+
+
+<!-- ══════════════════════════════════════
+     APP — Banner, overlays e shell
+══════════════════════════════════════ -->
+
+<!-- Banner modo somente leitura (demo) -->
+<div id="readonly-banner">
+  <span>👀 Você está no <strong>modo visualização</strong> — os dados são demonstrativos e não serão salvos.</span>
+  <button class="lp-btn lp-btn-primary btn-sm" style="padding:5px 12px;font-size:12px;white-space:nowrap" onclick="enterApp(true)">Usar com meus dados</button>
+  <span class="ro-close" onclick="document.getElementById('readonly-banner').classList.remove('show')">✕</span>
+</div>
+
+<!-- Overlay de foco total -->
 <div id="focus-overlay">
   <div class="fp" id="fp"></div>
   <div class="f-ring" style="width:300px;height:300px"></div>
@@ -226,14 +203,17 @@ input.inline-edit{background:var(--bg3);border:1px solid var(--accent);border-ra
   <div class="focus-lbl" id="focus-lbl">Foco profundo</div>
   <div class="focus-topic" id="focus-topic"></div>
   <div style="display:flex;gap:10px;margin-top:14px;position:relative;z-index:1">
-    <button class="btn btn-sm" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.5)" onclick="pomodoroToggle();updateFD()"><span id="focus-btn">⏸ Pausar</span></button>
+    <button class="btn btn-sm" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.5)" onclick="pomodoroToggle();updateFD()">
+      <span id="focus-btn">⏸ Pausar</span>
+    </button>
   </div>
   <div class="focus-exit" onclick="exitFocus()">✕ Sair do modo foco</div>
 </div>
 
+<!-- Canvas para confetti -->
 <canvas id="confetti-canvas"></canvas>
 
-<!-- SEARCH -->
+<!-- Overlay de busca global (Ctrl+K) -->
 <div id="search-overlay" onclick="if(event.target===this)closeSearch()">
   <div class="search-box">
     <input class="search-input" id="search-input" placeholder="Buscar… (Ctrl+K)" oninput="renderSearch(this.value)"/>
@@ -242,751 +222,467 @@ input.inline-edit{background:var(--bg3);border:1px solid var(--accent);border-ra
   </div>
 </div>
 
-<!-- MINI POMO -->
+<!-- Mini widget flutuante do Pomodoro -->
 <div id="mini-pomo" onclick="goto('pomodoro',document.querySelector('[data-page=pomodoro]'))">
-  <div><div class="mini-time" id="mini-time">25:00</div><div class="mini-ph" id="mini-ph">Foco 🎯</div></div>
+  <div>
+    <div class="mini-time" id="mini-time">25:00</div>
+    <div class="mini-ph" id="mini-ph">Foco 🎯</div>
+  </div>
   <div class="mini-dot" id="mini-dot"></div>
 </div>
 
-<!-- SIDEBAR -->
-<nav id="sidebar">
-  <div class="logo"><div class="logo-icon">📚</div><span>StudyFlow</span></div>
-  <div class="sidebar-section">Menu</div>
-  <button class="nav-item active" data-page="dashboard" onclick="goto('dashboard',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></button>
-  <button class="nav-item" data-page="planner" onclick="goto('planner',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><span>Planejador</span></button>
-  <button class="nav-item" data-page="pomodoro" onclick="goto('pomodoro',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg><span>Pomodoro</span></button>
-  <button class="nav-item" data-page="flashcards" onclick="goto('flashcards',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Flashcards</span></button>
-  <button class="nav-item" data-page="calendar" onclick="goto('calendar',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg><span>Calendário</span></button>
-  <button class="nav-item" data-page="analytics" onclick="goto('analytics',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Analytics</span></button>
-  <button class="nav-item" data-page="settings" onclick="goto('settings',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
-  <div class="sidebar-bottom">
-    <div class="user-chip"><div class="avatar" id="sb-av">?</div><div class="user-info"><div class="user-name" id="sb-name">Estudante</div><div class="user-level" id="sb-level">Nível 1</div></div></div>
-  </div>
-</nav>
+<!-- ══════════════════════════════════════
+     OVERLAY — Gerador de Plano com IA
+══════════════════════════════════════ -->
+<div id="ai-overlay" onclick="if(event.target===this)closeAIPanel()">
+  <div class="ai-panel">
 
-<!-- MAIN -->
-<main id="main">
-  <div class="topbar">
-    <div class="topbar-title" id="topbar-title">Dashboard</div>
-    <button class="btn btn-sm" onclick="openSearch()" style="color:var(--text2)">🔍 Ctrl+K</button>
-    <span class="badge badge-fire" id="tb-streak">🔥 0</span>
-    <span class="badge badge-xp" id="tb-xp">⚡ 0 XP</span>
-    <span class="badge badge-green" id="tb-lvl">Nível 1</span>
-  </div>
-  <div class="page-content">
-
-    <!-- DASHBOARD -->
-    <div id="page-dashboard" class="page active">
-      <div class="metrics" id="dash-metrics"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <!-- Cabeçalho -->
+    <div class="ai-panel-header">
+      <div class="ai-panel-title">
+        <div class="ai-panel-icon">✦</div>
         <div>
-          <div class="card" style="margin-bottom:14px">
-            <div class="card-title">Planos de estudo</div>
-            <div id="dash-plans" style="display:flex;flex-direction:column;gap:8px"></div>
+          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px">Gerar Plano com IA</div>
+          <div style="font-size:11.5px;color:var(--text2);margin-top:1px">Descreva o que quer aprender e a IA monta tudo</div>
+        </div>
+      </div>
+      <button class="ai-close-btn" onclick="closeAIPanel()">✕</button>
+    </div>
+
+    <!-- Input principal -->
+    <div class="ai-input-section" id="ai-input-section">
+      <div class="ai-input-wrap">
+        <textarea
+          id="ai-input"
+          class="ai-textarea"
+          placeholder="Ex: Quero aprender React do zero, focando em hooks, context e projetos práticos"
+          rows="3"
+          oninput="autoResizeAI(this)"
+        ></textarea>
+        <div class="ai-input-hint">Seja específico — quanto mais detalhe, melhor o plano gerado</div>
+      </div>
+
+      <!-- Sugestões rápidas -->
+      <div class="ai-suggestions">
+        <span class="ai-sug-label">Sugestões:</span>
+        <button class="ai-sug-chip" onclick="fillAIInput('Quero aprender React do zero ao avançado')">React</button>
+        <button class="ai-sug-chip" onclick="fillAIInput('Quero aprender Python para ciência de dados')">Python Data</button>
+        <button class="ai-sug-chip" onclick="fillAIInput('Quero estudar inglês do básico ao intermediário')">Inglês</button>
+        <button class="ai-sug-chip" onclick="fillAIInput('Quero aprender desenvolvimento mobile com Flutter')">Flutter</button>
+        <button class="ai-sug-chip" onclick="fillAIInput('Quero estudar SQL e banco de dados relacionais')">SQL</button>
+      </div>
+
+      <!-- Opções -->
+      <div class="ai-options">
+        <div class="ai-option-row">
+          <div class="ai-option-label">
+            <span>Nível</span>
           </div>
-          <div class="card">
-            <div class="card-title">✅ Checklist rápido</div>
-            <div id="quick-list" style="display:flex;flex-direction:column;gap:2px"></div>
-            <button class="btn btn-sm" style="margin-top:10px;width:100%;justify-content:center" onclick="goto('planner',document.querySelector('[data-page=planner]'))">Ver todas as tarefas →</button>
+          <div class="ai-opt-chips" id="ai-level-chips">
+            <button class="ai-opt-chip active" data-val="iniciante" onclick="selectAIOption('level',this)">Iniciante</button>
+            <button class="ai-opt-chip" data-val="intermediario" onclick="selectAIOption('level',this)">Intermediário</button>
+            <button class="ai-opt-chip" data-val="avancado" onclick="selectAIOption('level',this)">Avançado</button>
           </div>
         </div>
-        <div>
-          <div class="card" style="margin-bottom:14px">
-            <div class="card-title">Sugestão IA</div>
-            <div id="dash-suggestion"></div>
+        <div class="ai-option-row">
+          <div class="ai-option-label"><span>Duração</span></div>
+          <div class="ai-opt-chips" id="ai-duration-chips">
+            <button class="ai-opt-chip" data-val="2 semanas" onclick="selectAIOption('duration',this)">2 sem</button>
+            <button class="ai-opt-chip active" data-val="1 mes" onclick="selectAIOption('duration',this)">1 mês</button>
+            <button class="ai-opt-chip" data-val="3 meses" onclick="selectAIOption('duration',this)">3 meses</button>
+            <button class="ai-opt-chip" data-val="6 meses" onclick="selectAIOption('duration',this)">6 meses</button>
           </div>
-          <div class="card" style="margin-bottom:14px">
-            <div class="card-title">Streak — últimos 30 dias</div>
-            <div class="streak-mini" id="streak-mini"></div>
-          </div>
-          <div class="card">
-            <div class="card-title">XP & Conquistas</div>
-            <div id="dash-xp" style="margin-bottom:14px"></div>
-            <div class="ach-grid" id="dash-ach"></div>
+        </div>
+        <div class="ai-option-row">
+          <div class="ai-option-label"><span>Foco</span></div>
+          <div class="ai-opt-chips" id="ai-focus-chips">
+            <button class="ai-opt-chip active" data-val="teoria e pratica" onclick="selectAIOption('focus',this)">Teoria + Prática</button>
+            <button class="ai-opt-chip" data-val="projetos praticos" onclick="selectAIOption('focus',this)">Projetos</button>
+            <button class="ai-opt-chip" data-val="teoria aprofundada" onclick="selectAIOption('focus',this)">Teoria</button>
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">Horas estudadas (7 dias)</div>
-        <div class="chart-box"><canvas id="chart-hours"></canvas></div>
+
+      <button class="ai-generate-btn" id="ai-gen-btn" onclick="generateAIPlan()">
+        <span class="ai-btn-icon">✦</span>
+        <span id="ai-btn-text">Gerar Plano Agora</span>
+      </button>
+    </div>
+
+    <!-- Preview do resultado -->
+    <div id="ai-result" class="ai-result" style="display:none">
+      <div class="ai-result-header">
+        <div class="ai-result-title">✦ Plano gerado</div>
+        <button class="btn btn-sm" onclick="regenerateAIPlan()">↺ Regenerar</button>
+      </div>
+      <div id="ai-result-preview" class="ai-result-preview"></div>
+      <div class="ai-result-actions">
+        <button class="btn btn-sm" onclick="closeAIPanel()">Cancelar</button>
+        <button class="btn btn-primary" onclick="importAIPlan()" id="ai-import-btn">
+          🚀 Importar para o Planejador
+        </button>
       </div>
     </div>
 
-    <!-- PLANNER -->
-    <div id="page-planner" class="page">
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="openModal('plan')">+ Plano</button>
-        <button class="btn btn-sm" onclick="openModal('module')">+ Módulo</button>
-        <button class="btn btn-sm" onclick="openModal('topic')">+ Tópico</button>
-        <button class="btn btn-sm" onclick="openModal('task')">+ Tarefa</button>
-        <span style="font-size:11px;color:var(--text3);margin-left:4px">💡 Duplo clique para editar inline</span>
-      </div>
-      <div id="planner-content"></div>
+    <!-- Estado de loading -->
+    <div id="ai-loading" class="ai-loading" style="display:none">
+      <div class="ai-loading-orb"></div>
+      <div class="ai-loading-text">Gerando seu plano personalizado…</div>
+      <div class="ai-loading-sub">Isso pode levar alguns segundos</div>
     </div>
 
-    <!-- POMODORO -->
-    <div id="page-pomodoro" class="page">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="card" style="text-align:center">
-          <div class="card-title">Timer Pomodoro</div>
-          <div class="pomodoro-ring" id="pomo-ring">
-            <svg width="196" height="196" viewBox="0 0 196 196"><circle cx="98" cy="98" r="86" fill="none" stroke="var(--bg4)" stroke-width="7"/><circle id="pomo-arc" cx="98" cy="98" r="86" fill="none" stroke="#6c8eff" stroke-width="7" stroke-dasharray="540" stroke-dashoffset="0" stroke-linecap="round"/></svg>
-            <div class="pomo-ring-text"><div class="pomo-time" id="pomo-display">25:00</div><div class="pomo-phase" id="pomo-phase">Foco 🎯</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     APP SHELL — Sidebar + Main
+══════════════════════════════════════ -->
+<div id="app">
+
+  <!-- Sidebar / Navegação -->
+  <nav id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">📚</div>
+      <span>StudyFlow</span>
+    </div>
+
+    <div class="sidebar-section">Menu</div>
+
+    <button class="nav-item active" data-page="dashboard" onclick="goto('dashboard',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Dashboard</span>
+    </button>
+
+    <button class="nav-item" data-page="planner" onclick="goto('planner',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <span>Planejador</span>
+    </button>
+
+    <button class="nav-item" data-page="pomodoro" onclick="goto('pomodoro',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Pomodoro</span>
+    </button>
+
+    <button class="nav-item" data-page="flashcards" onclick="goto('flashcards',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      <span>Flashcards</span>
+    </button>
+
+    <button class="nav-item" data-page="calendar" onclick="goto('calendar',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+      <span>Calendário</span>
+    </button>
+
+    <button class="nav-item" data-page="analytics" onclick="goto('analytics',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Analytics</span>
+    </button>
+
+    <button class="nav-item" data-page="settings" onclick="goto('settings',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Configurações</span>
+    </button>
+
+    <div class="sidebar-bottom">
+      <!-- Botão IA na sidebar -->
+      <div style="padding:0 12px 10px">
+        <button class="ai-sidebar-btn" onclick="guardedAction(()=>openAIPanel())">
+          <span class="ai-sidebar-icon">✦</span>
+          <span>Gerar Plano com IA</span>
+        </button>
+      </div>
+      <div class="user-chip">
+        <div class="avatar" id="sb-av">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sb-name">Estudante</div>
+          <div class="user-level" id="sb-level">Nível 1</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Área principal -->
+  <main id="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <button class="btn btn-sm" onclick="openSearch()" style="color:var(--text2)">🔍 Ctrl+K</button>
+      <span class="badge badge-fire" id="tb-streak">🔥 0</span>
+      <span class="badge badge-xp" id="tb-xp">⚡ 0 XP</span>
+      <span class="badge badge-green" id="tb-lvl">Nível 1</span>
+    </div>
+
+    <!-- Conteúdo das páginas -->
+    <div class="page-content">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="dash-hero" id="dash-hero"></div>
+        <div class="metrics-row" id="dash-secondary"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-title">Planos de estudo</div>
+              <div id="dash-plans" style="display:flex;flex-direction:column;gap:8px"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">✅ Checklist rápido</div>
+              <div id="quick-list" style="display:flex;flex-direction:column;gap:2px"></div>
+              <button class="btn btn-sm" style="margin-top:10px;width:100%;justify-content:center" onclick="goto('planner',document.querySelector('[data-page=planner]'))">Ver todas as tarefas →</button>
+            </div>
           </div>
-          <div class="pomo-dots" id="pomo-dots"></div>
-          <div style="margin:10px 0"><div class="field"><label>Estudando sobre</label><select id="pomo-topic-sel"><option value="">— selecionar tópico —</option></select></div></div>
-          <div class="pomo-controls">
-            <button class="btn btn-sm" onclick="pomodoroReset()">⟳</button>
-            <button class="btn btn-sm" onclick="enterFocus()" title="Modo foco">🎯 Foco total</button>
-            <button class="btn btn-primary" id="pomo-btn" onclick="pomodoroToggle()">▶ Iniciar</button>
+          <div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-title">✦ Gerar Plano com IA</div>
+              <div class="ai-dash-card">
+                <div class="ai-dash-desc">Descreva o que quer aprender e a IA cria toda a estrutura automaticamente.</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                  <button class="ai-dash-chip" onclick="guardedAction(()=>{fillAIInput('Quero aprender React do zero');openAIPanel()})">React</button>
+                  <button class="ai-dash-chip" onclick="guardedAction(()=>{fillAIInput('Quero aprender Python para dados');openAIPanel()})">Python</button>
+                  <button class="ai-dash-chip" onclick="guardedAction(()=>{fillAIInput('Quero estudar inglês do zero');openAIPanel()})">Inglês</button>
+                </div>
+                <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center;gap:6px" onclick="guardedAction(()=>openAIPanel())">
+                  <span>✦</span> Criar meu plano personalizado
+                </button>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-title">Sugestão</div>
+              <div id="dash-suggestion"></div>
+            </div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-title">Streak — últimos 30 dias</div>
+              <div class="streak-mini" id="streak-mini"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">XP & Conquistas</div>
+              <div id="dash-xp" style="margin-bottom:14px"></div>
+              <div class="ach-grid" id="dash-ach"></div>
+            </div>
           </div>
-          <div style="margin-top:8px;font-size:10.5px;color:var(--text3)">Espaço = pausar/continuar</div>
         </div>
         <div class="card">
-          <div class="card-title">Sessões de hoje</div>
-          <div id="pomo-sessions" style="display:flex;flex-direction:column;gap:5px"></div>
-          <div class="card-title" style="margin-top:16px">Por hora do dia</div>
-          <div class="hour-bars" id="hour-bars"></div>
-          <div style="display:flex;justify-content:space-between;margin-top:3px"><span style="font-size:9.5px;color:var(--text3)">00h</span><span style="font-size:9.5px;color:var(--text3)">12h</span><span style="font-size:9.5px;color:var(--text3)">23h</span></div>
-          <div class="card-title" style="margin-top:16px">Tempo por tópico</div>
-          <div id="topic-time-list" style="display:flex;flex-direction:column;gap:5px"></div>
-          <div class="card-title" style="margin-top:16px">Totais</div>
-          <div id="pomo-stats" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+          <div class="card-title">Horas estudadas (7 dias)</div>
+          <div class="chart-box"><canvas id="chart-hours"></canvas></div>
         </div>
       </div>
-    </div>
 
-    <!-- FLASHCARDS -->
-    <div id="page-flashcards" class="page">
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="openModal('fc')">+ Flashcard</button>
-        <button class="btn btn-sm" onclick="startReview()">▶ Revisar</button>
-        <span id="fc-due-badge" class="badge badge-red" style="display:none"></span>
+      <!-- PLANEJADOR -->
+      <div id="page-planner" class="page">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" id="planner-toolbar">
+          <button class="btn btn-primary btn-sm" onclick="guardedAction(()=>openModal('plan'))">+ Plano</button>
+          <button class="btn btn-sm" onclick="guardedAction(()=>openModal('module'))">+ Módulo</button>
+          <button class="btn btn-sm" onclick="guardedAction(()=>openModal('topic'))">+ Tópico</button>
+          <button class="btn btn-sm" onclick="guardedAction(()=>openModal('task'))">+ Tarefa</button>
+          <div style="width:1px;height:18px;background:var(--border2);margin:0 2px"></div>
+          <button class="btn btn-sm ai-planner-btn" onclick="guardedAction(()=>openAIPanel())">
+            <span style="font-size:13px">✦</span> Gerar com IA
+          </button>
+          <span style="font-size:11px;color:var(--text3);margin-left:4px" id="planner-hint">💡 Duplo clique para editar inline</span>
+        </div>
+        <div id="planner-content"></div>
       </div>
-      <!-- TAG FILTER -->
-      <div id="fc-tags-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        <span style="font-size:11px;color:var(--text3)">Filtrar por tag:</span>
-        <span class="fc-tag active" onclick="filterFC('')" id="tag-all">Todos</span>
-        <div id="tag-list-filter"></div>
+
+      <!-- POMODORO -->
+      <div id="page-pomodoro" class="page">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card" style="text-align:center">
+            <div class="card-title">Timer Pomodoro</div>
+            <div class="pomodoro-ring" id="pomo-ring">
+              <svg width="196" height="196" viewBox="0 0 196 196">
+                <circle cx="98" cy="98" r="86" fill="none" stroke="var(--bg4)" stroke-width="7"/>
+                <circle id="pomo-arc" cx="98" cy="98" r="86" fill="none" stroke="#6c8eff" stroke-width="7" stroke-dasharray="540" stroke-dashoffset="0" stroke-linecap="round"/>
+              </svg>
+              <div class="pomo-ring-text">
+                <div class="pomo-time" id="pomo-display">25:00</div>
+                <div class="pomo-phase" id="pomo-phase">Foco 🎯</div>
+              </div>
+            </div>
+            <div class="pomo-dots" id="pomo-dots"></div>
+            <div style="margin:10px 0">
+              <div class="field">
+                <label>Estudando sobre</label>
+                <select id="pomo-topic-sel"><option value="">— selecionar tópico —</option></select>
+              </div>
+            </div>
+            <div class="pomo-controls">
+              <button class="btn btn-sm" onclick="pomodoroReset()">⟳</button>
+              <button class="btn btn-sm" onclick="enterFocus()">🎯 Foco total</button>
+              <button class="btn btn-primary" id="pomo-btn" onclick="pomodoroToggle()">▶ Iniciar</button>
+            </div>
+            <div style="margin-top:8px;font-size:10.5px;color:var(--text3)">Espaço = pausar/continuar</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Sessões de hoje</div>
+            <div id="pomo-sessions" style="display:flex;flex-direction:column;gap:5px"></div>
+            <div class="card-title" style="margin-top:16px">Por hora do dia</div>
+            <div class="hour-bars" id="hour-bars"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:3px">
+              <span style="font-size:9.5px;color:var(--text3)">00h</span>
+              <span style="font-size:9.5px;color:var(--text3)">12h</span>
+              <span style="font-size:9.5px;color:var(--text3)">23h</span>
+            </div>
+            <div class="card-title" style="margin-top:16px">Tempo por tópico</div>
+            <div id="topic-time-list" style="display:flex;flex-direction:column;gap:5px"></div>
+            <div class="card-title" style="margin-top:16px">Totais</div>
+            <div id="pomo-stats" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+          </div>
+        </div>
       </div>
-      <div id="fc-review-area" style="display:none">
-        <div class="card">
-          <div class="card-title">Revisão espaçada</div>
-          <div class="fc-wrap" id="fc-card" onclick="flipCard()">
-            <div class="fc-inner">
-              <div class="fc-face"><div class="fc-label">Pergunta</div><div class="fc-text" id="fc-front"></div><div class="fc-hint">Clique para virar</div></div>
-              <div class="fc-face fc-back"><div class="fc-label">Resposta</div><div class="fc-text" id="fc-back-text"></div>
-                <div class="fc-diff">
-                  <button class="btn btn-sm" style="border-color:#ff5f5f;color:#ff5f5f" onclick="rateCard('HARD');event.stopPropagation()">😰 Difícil (+1d)</button>
-                  <button class="btn btn-sm" style="border-color:var(--amber);color:var(--amber)" onclick="rateCard('MEDIUM');event.stopPropagation()">🤔 Médio (+3d)</button>
-                  <button class="btn btn-sm" style="border-color:var(--green);color:var(--green)" onclick="rateCard('EASY');event.stopPropagation()">😊 Fácil (+7d)</button>
+
+      <!-- FLASHCARDS -->
+      <div id="page-flashcards" class="page">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="guardedAction(()=>openModal('fc'))">+ Flashcard</button>
+          <button class="btn btn-sm" onclick="startReview()">▶ Revisar</button>
+          <span id="fc-due-badge" class="badge badge-red" style="display:none"></span>
+        </div>
+        <div id="fc-tags-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <span style="font-size:11px;color:var(--text3)">Filtrar:</span>
+          <span class="fc-tag active" onclick="filterFC('')" id="tag-all">Todos</span>
+          <div id="tag-list-filter"></div>
+        </div>
+        <div id="fc-review-area" style="display:none">
+          <div class="card">
+            <div class="card-title">Revisão espaçada</div>
+            <div class="fc-wrap" id="fc-card" onclick="flipCard()">
+              <div class="fc-inner">
+                <div class="fc-face">
+                  <div class="fc-label">Pergunta</div>
+                  <div class="fc-text" id="fc-front"></div>
+                  <div class="fc-hint">Clique para virar</div>
+                </div>
+                <div class="fc-face fc-back">
+                  <div class="fc-label">Resposta</div>
+                  <div class="fc-text" id="fc-back-text"></div>
+                  <div class="fc-diff">
+                    <button class="btn btn-sm" style="border-color:#ff5f5f;color:#ff5f5f" onclick="rateCard('HARD');event.stopPropagation()">😰 Difícil (+1d)</button>
+                    <button class="btn btn-sm" style="border-color:var(--amber);color:var(--amber)" onclick="rateCard('MEDIUM');event.stopPropagation()">🤔 Médio (+3d)</button>
+                    <button class="btn btn-sm" style="border-color:var(--green);color:var(--green)" onclick="rateCard('EASY');event.stopPropagation()">😊 Fácil (+7d)</button>
+                  </div>
                 </div>
               </div>
             </div>
+            <div id="fc-progress" style="text-align:center;margin-top:10px;font-size:12.5px;color:var(--text2)"></div>
           </div>
-          <div id="fc-progress" style="text-align:center;margin-top:10px;font-size:12.5px;color:var(--text2)"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Meus flashcards (<span id="fc-count">0</span>)</div>
+          <div id="fc-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px"></div>
         </div>
       </div>
-      <div class="card"><div class="card-title">Meus flashcards (<span id="fc-count">0</span>)</div><div id="fc-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px"></div></div>
-    </div>
 
-    <!-- CALENDAR -->
-    <div id="page-calendar" class="page">
-      <div class="card">
-        <div class="cal-header"><button class="btn btn-icon btn-sm" onclick="calNav(-1)">‹</button><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700" id="cal-title"></div><button class="btn btn-icon btn-sm" onclick="calNav(1)">›</button></div>
-        <div class="cal-grid" id="cal-wdays"></div><div style="margin-top:7px" class="cal-grid" id="cal-days"></div>
+      <!-- CALENDÁRIO -->
+      <div id="page-calendar" class="page">
+        <div class="card">
+          <div class="cal-header">
+            <button class="btn btn-icon btn-sm" onclick="calNav(-1)">‹</button>
+            <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700" id="cal-title"></div>
+            <button class="btn btn-icon btn-sm" onclick="calNav(1)">›</button>
+          </div>
+          <div class="cal-grid" id="cal-wdays"></div>
+          <div style="margin-top:7px" class="cal-grid" id="cal-days"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Sessões de estudo</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button class="btn btn-primary btn-sm" onclick="guardedAction(()=>openModal('session'))">+ Registrar</button>
+          </div>
+          <div id="cal-sessions" style="display:flex;flex-direction:column;gap:5px"></div>
+        </div>
       </div>
-      <div class="card"><div class="card-title">Sessões de estudo</div><div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn btn-primary btn-sm" onclick="openModal('session')">+ Registrar</button></div><div id="cal-sessions" style="display:flex;flex-direction:column;gap:5px"></div></div>
-    </div>
 
-    <!-- ANALYTICS -->
-    <div id="page-analytics" class="page">
-      <div class="metrics" id="analytics-metrics"></div>
-      <div class="analytics-grid">
-        <div class="card"><div class="card-title">Progresso por plano</div><div class="chart-box"><canvas id="chart-plans"></canvas></div></div>
-        <div class="card"><div class="card-title">Distribuição de foco por tópico</div><div class="chart-box"><canvas id="chart-topic-dist"></canvas></div></div>
+      <!-- ANALYTICS -->
+      <div id="page-analytics" class="page">
+        <div class="metrics-row" id="analytics-metrics"></div>
+        <div class="analytics-grid">
+          <div class="card">
+            <div class="card-title">Progresso por plano</div>
+            <div class="chart-box"><canvas id="chart-plans"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Tempo por tópico</div>
+            <div class="chart-box"><canvas id="chart-topic-dist"></canvas></div>
+          </div>
+        </div>
+        <div class="analytics-grid">
+          <div class="card">
+            <div class="card-title">Tarefas concluídas (7 dias)</div>
+            <div class="chart-box"><canvas id="chart-tasks"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Atividade (56 dias)</div>
+            <div class="streak-row" id="streak-heatmap" style="margin-bottom:8px"></div>
+            <div style="display:flex;gap:8px;align-items:center;font-size:10.5px;color:var(--text3)">
+              <div style="width:10px;height:10px;background:var(--bg4);border-radius:2px"></div>0
+              <div style="width:10px;height:10px;background:rgba(34,211,160,.35);border-radius:2px"></div>1-2
+              <div style="width:10px;height:10px;background:var(--green);border-radius:2px"></div>3+
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="analytics-grid">
-        <div class="card"><div class="card-title">Tarefas concluídas (7 dias)</div><div class="chart-box"><canvas id="chart-tasks"></canvas></div></div>
-        <div class="card"><div class="card-title">Atividade (56 dias)</div><div class="streak-row" id="streak-heatmap" style="margin-bottom:8px"></div><div style="display:flex;gap:8px;align-items:center;font-size:10.5px;color:var(--text3)"><div style="width:10px;height:10px;background:var(--bg4);border-radius:2px"></div>0<div style="width:10px;height:10px;background:rgba(34,211,160,.35);border-radius:2px"></div>1-2<div style="width:10px;height:10px;background:var(--green);border-radius:2px"></div>3+</div></div>
+
+      <!-- CONFIGURAÇÕES -->
+      <div id="page-settings" class="page">
+        <div class="settings-section">
+          <div class="card">
+            <div class="card-title">Perfil</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="field"><label>Seu nome</label><input id="set-name" placeholder="Como quer ser chamado?"/></div>
+              <button class="btn btn-primary btn-sm" onclick="saveSettings()" style="align-self:flex-start">Salvar</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Aparência & Som</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="setting-row"><div><div class="setting-label">Modo claro</div><div class="setting-desc">Alterna tema escuro / claro</div></div><label class="toggle-wrap"><input type="checkbox" id="set-light" onchange="toggleTheme(this.checked)"><span class="toggle-slider"></span></label></div>
+              <div class="setting-row"><div><div class="setting-label">Som ao completar pomodoro</div><div class="setting-desc">3 bipes via Web Audio API</div></div><label class="toggle-wrap"><input type="checkbox" id="set-sound" onchange="DB.prefs.sound=this.checked;save()"><span class="toggle-slider"></span></label></div>
+              <div class="setting-row"><div><div class="setting-label">Notificações do browser</div><div class="setting-desc">Alerta mesmo com aba minimizada</div></div><label class="toggle-wrap"><input type="checkbox" id="set-notif" onchange="toggleNotif(this.checked)"><span class="toggle-slider"></span></label></div>
+              <div class="setting-row"><div><div class="setting-label">Widget flutuante</div><div class="setting-desc">Mini timer ao navegar para outra aba</div></div><label class="toggle-wrap"><input type="checkbox" id="set-widget" onchange="DB.prefs.miniWidget=this.checked;save()"><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Durações do Pomodoro</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="field"><label>Foco (min)</label><div class="range-row"><input type="range" id="set-focus" min="5" max="60" step="5" value="25" oninput="updateRangeLabel('focus',this.value)"><span class="range-val" id="lbl-focus">25</span></div></div>
+              <div class="field"><label>Pausa curta (min)</label><div class="range-row"><input type="range" id="set-short" min="1" max="15" step="1" value="5" oninput="updateRangeLabel('short',this.value)"><span class="range-val" id="lbl-short">5</span></div></div>
+              <div class="field"><label>Pausa longa (min)</label><div class="range-row"><input type="range" id="set-long" min="10" max="30" step="5" value="15" oninput="updateRangeLabel('long',this.value)"><span class="range-val" id="lbl-short2">15</span></div></div>
+              <button class="btn btn-primary btn-sm" onclick="savePomoDurations()" style="align-self:flex-start">Aplicar</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Dados</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-sm" onclick="exportData()">⬇ Exportar JSON</button>
+              <label class="btn btn-sm" style="cursor:pointer">⬆ Importar<input type="file" accept=".json" style="display:none" onchange="importData(this)"/></label>
+              <button class="btn btn-sm btn-danger" onclick="if(confirm('Apagar TODOS os dados?'))resetData()">🗑 Resetar</button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- SETTINGS -->
-    <div id="page-settings" class="page">
-      <div class="settings-section">
-        <div class="card"><div class="card-title">Perfil</div><div style="display:flex;flex-direction:column;gap:10px"><div class="field"><label>Seu nome</label><input id="set-name" placeholder="Como quer ser chamado?"/></div><button class="btn btn-primary btn-sm" onclick="saveSettings()" style="align-self:flex-start">Salvar</button></div></div>
-        <div class="card"><div class="card-title">Aparência & Som</div><div style="display:flex;flex-direction:column;gap:8px">
-          <div class="setting-row"><div><div class="setting-label">Modo claro</div><div class="setting-desc">Alterna tema escuro / claro</div></div><label class="toggle-wrap"><input type="checkbox" id="set-light" onchange="toggleTheme(this.checked)"><span class="toggle-slider"></span></label></div>
-          <div class="setting-row"><div><div class="setting-label">Som ao completar pomodoro</div><div class="setting-desc">3 bipes via Web Audio API</div></div><label class="toggle-wrap"><input type="checkbox" id="set-sound" onchange="DB.prefs.sound=this.checked;save()"><span class="toggle-slider"></span></label></div>
-          <div class="setting-row"><div><div class="setting-label">Notificações do browser</div><div class="setting-desc">Alerta mesmo com aba minimizada</div></div><label class="toggle-wrap"><input type="checkbox" id="set-notif" onchange="toggleNotif(this.checked)"><span class="toggle-slider"></span></label></div>
-          <div class="setting-row"><div><div class="setting-label">Widget flutuante do pomodoro</div><div class="setting-desc">Mini timer ao navegar para outra aba</div></div><label class="toggle-wrap"><input type="checkbox" id="set-widget" onchange="DB.prefs.miniWidget=this.checked;save()"><span class="toggle-slider"></span></label></div>
-        </div></div>
-        <div class="card"><div class="card-title">Durações do Pomodoro</div><div style="display:flex;flex-direction:column;gap:10px">
-          <div class="field"><label>Foco (min)</label><div class="range-row"><input type="range" id="set-focus" min="5" max="60" step="5" value="25" oninput="updateRangeLabel('focus',this.value)"><span class="range-val" id="lbl-focus">25</span></div></div>
-          <div class="field"><label>Pausa curta (min)</label><div class="range-row"><input type="range" id="set-short" min="1" max="15" step="1" value="5" oninput="updateRangeLabel('short',this.value)"><span class="range-val" id="lbl-short">5</span></div></div>
-          <div class="field"><label>Pausa longa (min)</label><div class="range-row"><input type="range" id="set-long" min="10" max="30" step="5" value="15" oninput="updateRangeLabel('long',this.value)"><span class="range-val" id="lbl-long">15</span></div></div>
-          <button class="btn btn-primary btn-sm" onclick="savePomoDurations()" style="align-self:flex-start">Aplicar</button>
-        </div></div>
-        <div class="card"><div class="card-title">Dados</div><div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-sm" onclick="exportData()">⬇ Exportar JSON</button>
-          <label class="btn btn-sm" style="cursor:pointer">⬆ Importar<input type="file" accept=".json" style="display:none" onchange="importData(this)"/></label>
-          <button class="btn btn-sm btn-danger" onclick="if(confirm('Apagar TODOS os dados?'))resetData()">🗑 Resetar tudo</button>
-        </div></div>
-      </div>
-    </div>
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app -->
 
-  </div>
-</main>
-
-<!-- MODAL -->
+<!-- Modal global (criar/editar itens) -->
 <div id="modal-bg" onclick="if(event.target===this)closeModal()">
-  <div class="modal"><div class="modal-title" id="modal-title"></div><div id="modal-body"></div><div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancelar</button><button class="btn btn-primary btn-sm" onclick="saveModal()">Salvar</button></div></div>
+  <div class="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-sm" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="saveModal()">Salvar</button>
+    </div>
+  </div>
 </div>
+
+<!-- Container de toasts -->
 <div id="toast"></div>
 
-<script>
-/* ═══ DATA ═══ */
-const SKEY='studyflow_v4';
-let DB=load();
-let cH=null,cP=null,cT=null,cTD=null;
+<!-- JavaScript do app -->
+<script src="js/app.js"></script>
 
-function load(){
-  try{const r=localStorage.getItem(SKEY);if(r)return JSON.parse(r);}catch(e){}
-  return{user:{name:'Estudante',xp:0,level:1,streak:0,lastStudied:null},plans:[],modules:[],topics:[],tasks:[],pomodoro:[],flashcards:[],reviews:[],sessions:[],achievements:[],activityLog:[],notes:{},prefs:{sound:true,miniWidget:true,focusMins:25,shortMins:5,longMins:15,light:false,notifications:false}};
-}
-function save(){localStorage.setItem(SKEY,JSON.stringify(DB));}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-
-/* ═══ ACH ═══ */
-const ACH=[
-  {id:'first_task',icon:'✅',name:'1ª Tarefa',check:()=>DB.tasks.filter(t=>t.done).length>=1},
-  {id:'streak_3',icon:'🔥',name:'Streak 3x',check:()=>DB.user.streak>=3},
-  {id:'streak_7',icon:'🔥',name:'Semana 🔥',check:()=>DB.user.streak>=7},
-  {id:'pomo_10',icon:'⏱️',name:'10 Pomodoros',check:()=>pomoFocusCount()>=10},
-  {id:'pomo_50',icon:'💎',name:'50 Pomodoros',check:()=>pomoFocusCount()>=50},
-  {id:'fc_10',icon:'🃏',name:'10 Flashcards',check:()=>DB.flashcards.length>=10},
-  {id:'plan_1',icon:'📚',name:'Planejador',check:()=>DB.plans.length>=1},
-  {id:'mod_done',icon:'🏆',name:'Módulo ✓',check:()=>getCompletedMods().length>=1},
-  {id:'xp_100',icon:'⚡',name:'100 XP',check:()=>DB.user.xp>=100},
-  {id:'xp_500',icon:'⚡',name:'500 XP',check:()=>DB.user.xp>=500},
-  {id:'tasks_20',icon:'💪',name:'20 Tarefas',check:()=>DB.tasks.filter(t=>t.done).length>=20},
-  {id:'night',icon:'🦉',name:'Coruja',check:()=>DB.pomodoro.some(p=>{const h=new Date(p.createdAt||0).getHours();return h>=22||h<=4;})},
-];
-function pomoFocusCount(){return DB.pomodoro.filter(p=>p.type==='FOCUS').length;}
-function grantXP(type,amount){
-  const g=amount||(type==='task'?10:type==='pomodoro'?20:type==='module'?100:5);
-  DB.user.xp+=g;DB.user.level=Math.floor(DB.user.xp/100)+1;
-  updateStreak();checkAch();save();updateTopbar();showToast(`+${g} XP ⚡`,'accent');
-}
-function updateStreak(){
-  const today=tStr();if(DB.user.lastStudied===today)return;
-  DB.user.streak=DB.user.lastStudied===dStr(new Date(Date.now()-86400000))?DB.user.streak+1:1;
-  DB.user.lastStudied=today;logAct(today);
-}
-function logAct(d){if(!DB.activityLog.includes(d))DB.activityLog.push(d);}
-function checkAch(){ACH.forEach(a=>{if(!DB.achievements.includes(a.id)&&a.check()){DB.achievements.push(a.id);showToast('🏆 '+a.name,'amber');}});}
-function getCompletedMods(){return DB.modules.filter(m=>{const ts=DB.topics.filter(t=>t.moduleId===m.id);return ts.length&&ts.every(t=>{const tks=DB.tasks.filter(k=>k.topicId===t.id);return tks.length&&tks.every(k=>k.done);});});}
-function planPct(pid){const tasks=DB.modules.filter(m=>m.planId===pid).flatMap(m=>DB.topics.filter(t=>t.moduleId===m.id)).flatMap(t=>DB.tasks.filter(k=>k.topicId===t.id));return tasks.length?Math.round(tasks.filter(t=>t.done).length/tasks.length*100):0;}
-function modPct(mid){const tasks=DB.topics.filter(t=>t.moduleId===mid).flatMap(t=>DB.tasks.filter(k=>k.topicId===t.id));return tasks.length?Math.round(tasks.filter(t=>t.done).length/tasks.length*100):0;}
-function totalPct(){return DB.tasks.length?Math.round(DB.tasks.filter(t=>t.done).length/DB.tasks.length*100):0;}
-
-/* ═══ ESTIMATE ═══ */
-function estimatePlan(pid){
-  const pending=DB.modules.filter(m=>m.planId===pid).flatMap(m=>DB.topics.filter(t=>t.moduleId===m.id)).flatMap(t=>DB.tasks.filter(k=>k.topicId===t.id&&!k.done));
-  if(!pending.length)return null;
-  const l7=last7();const pomosPerDay=l7.reduce((s,d)=>s+DB.pomodoro.filter(p=>p.date===d&&p.type==='FOCUS').length,0)/7||0.5;
-  const estMins=pending.reduce((s,t)=>s+(t.mins||25),0);const fm=(DB.prefs?.focusMins)||25;
-  const pomosNeeded=Math.ceil(estMins/fm);const days=Math.ceil(pomosNeeded/pomosPerDay);
-  if(days>365)return null;
-  const eta=new Date(Date.now()+days*86400000);
-  return `~${days}d (${eta.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})})`;
-}
-
-/* ═══ TOPIC TIME ═══ */
-function topicPomoMins(topicId){return DB.pomodoro.filter(p=>p.type==='FOCUS'&&p.topicId===topicId).length*((DB.prefs?.focusMins)||25);}
-
-/* ═══ NAV ═══ */
-function goto(page,btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  if(btn)btn.classList.add('active');
-  const titles={dashboard:'Dashboard',planner:'Planejador',pomodoro:'Timer Pomodoro',flashcards:'Flashcards',calendar:'Calendário',analytics:'Analytics',settings:'Configurações'};
-  document.getElementById('topbar-title').textContent=titles[page]||page;
-  renderPage(page);updateMiniPomo();
-}
-function renderPage(p){
-  if(p==='dashboard')renderDash();if(p==='planner')renderPlanner();if(p==='pomodoro')renderPomo();
-  if(p==='flashcards')renderFC();if(p==='calendar')renderCal();if(p==='analytics')renderAnalytics();if(p==='settings')renderSettings();
-}
-
-/* ═══ DASHBOARD ═══ */
-function renderDash(){
-  const tp=DB.pomodoro.filter(p=>p.date===tStr()&&p.type==='FOCUS').length;
-  const fm=(DB.prefs?.focusMins)||25;const tmins=tp*fm;
-  const ms=[
-    {l:'Progresso geral',v:totalPct()+'%',s:`${DB.tasks.filter(t=>t.done).length}/${DB.tasks.length} tarefas`,c:'#6c8eff'},
-    {l:'Tempo hoje',v:tmins<60?tmins+'min':Math.floor(tmins/60)+'h'+(tmins%60?tmins%60+'m':''),s:`${tp} pomodoros`,c:'#22d3a0'},
-    {l:'Pendentes',v:DB.tasks.filter(t=>!t.done).length,s:`${DB.tasks.filter(t=>t.done).length} concluídas`,c:'#f5a623'},
-    {l:'Streak',v:DB.user.streak+' dias',s:'Estude hoje para manter!',c:'#ff6eb4'},
-  ];
-  document.getElementById('dash-metrics').innerHTML=ms.map(m=>`<div class="metric"><div class="metric-label">${m.l}</div><div class="metric-value" style="color:${m.c}">${m.v}</div><div class="metric-sub">${m.s}</div></div>`).join('');
-
-  // Plans with estimate
-  const pe=document.getElementById('dash-plans');
-  pe.innerHTML=!DB.plans.length?`<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Nenhum plano ainda</div><button class="btn btn-primary btn-sm" onclick="goto('planner',document.querySelector('[data-page=planner]'))">Criar plano</button></div>`:
-    DB.plans.map(p=>{
-      const pct=planPct(p.id);const est=estimatePlan(p.id);
-      return `<div class="plan-item" onclick="goto('planner',document.querySelector('[data-page=planner]'))"><div class="plan-header"><div class="plan-dot" style="background:${p.color||'#6c8eff'}"></div><div class="plan-name">${p.title}</div><div class="plan-pct">${pct}%</div>${est?`<span class="estimate" title="Estimativa de conclusão no ritmo atual">${est}</span>`:''}</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${p.color||'#6c8eff'}"></div></div></div>`;
-    }).join('');
-
-  // Quick checklist — top 8 tasks by priority
-  const prioOrder={ALTA:0,MEDIA:1,BAIXA:2,undefined:3};
-  const topTasks=[...DB.tasks.filter(t=>!t.done)].sort((a,b)=>(prioOrder[a.priority]||3)-(prioOrder[b.priority]||3)).slice(0,8);
-  const prioColors={ALTA:'#ff5f5f',MEDIA:'#f5a623',BAIXA:'#22d3a0'};
-  document.getElementById('quick-list').innerHTML=!topTasks.length?'<div style="font-size:12px;color:var(--text3);text-align:center;padding:12px">🎉 Nenhuma tarefa pendente!</div>':
-    topTasks.map(t=>`<div class="quick-item ${t.done?'done':''}"><div class="quick-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"><svg width="9" height="9" viewBox="0 0 10 10"><polyline points="1.5 5 4 7.5 8.5 2.5" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="quick-prio-dot" style="background:${prioColors[t.priority]||'var(--border2)'}"></div><div class="quick-text">${t.title}</div></div>`).join('');
-
-  // Suggestion
-  const sug=getSug();
-  document.getElementById('dash-suggestion').innerHTML=`<div class="suggestion"><div class="sug-icon">${sug.icon}</div><div><div class="sug-title">${sug.title}</div><div class="sug-text">${sug.text}</div></div></div>`;
-
-  // Streak mini calendar (last 30 days)
-  const today=tStr();const days30=Array.from({length:30},(_,i)=>{const d=new Date(Date.now()-(29-i)*86400000);return dStr(d);});
-  document.getElementById('streak-mini').innerHTML=days30.map(d=>{
-    const cnt=DB.pomodoro.filter(p=>p.date===d&&p.type==='FOCUS').length;
-    const isToday=d===today;
-    return `<div class="sm-day ${cnt>0?'active':''} ${isToday?'today-dot':''}" title="${d}: ${cnt} pomodoro(s)"></div>`;
-  }).join('');
-
-  // XP
-  const xi=DB.user.xp%100;
-  document.getElementById('dash-xp').innerHTML=`<div class="xp-bar-wrap"><div class="xp-bar-top"><div class="xp-level">Nível ${DB.user.level}</div><div class="xp-pts">${xi}/100 XP</div></div><div class="xp-track"><div class="xp-fill" style="width:${xi}%"></div></div></div>`;
-  document.getElementById('dash-ach').innerHTML=ACH.map(a=>`<div class="ach-item ${DB.achievements.includes(a.id)?'unlocked':'locked'}" title="${a.name}"><div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div></div>`).join('');
-
-  if(cH){cH.destroy();cH=null;}
-  const l7=last7();const hd=l7.map(d=>DB.pomodoro.filter(p=>p.date===d&&p.type==='FOCUS').length*fm/60);
-  cH=new Chart(document.getElementById('chart-hours'),{type:'bar',data:{labels:l7.map(d=>d.slice(5)),datasets:[{data:hd,backgroundColor:'rgba(108,142,255,.45)',borderColor:'#6c8eff',borderWidth:2,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#555c75'},grid:{color:'rgba(255,255,255,.03)'}},y:{ticks:{color:'#555c75',callback:v=>v.toFixed(1)+'h'},grid:{color:'rgba(255,255,255,.03)'}}}}});
-}
-function getSug(){
-  const d=getDueFC().length;if(d>0)return{icon:'🃏',title:'Revisão pendente',text:`${d} flashcard(s) para revisar hoje!`};
-  const prioOrder={ALTA:0,MEDIA:1,BAIXA:2};
-  const p=[...DB.tasks.filter(t=>!t.done)].sort((a,b)=>(prioOrder[a.priority]||3)-(prioOrder[b.priority]||3));
-  if(p.length){const t=p[0];const tp=DB.topics.find(x=>x.id===t.topicId);const pLabel=t.priority?` [${t.priority}]`:'';return{icon:'📖',title:'Continue estudando',text:`${pLabel} "${t.title}"${tp?' em '+tp.title:''}`};}
-  return{icon:'🏖️',title:'Tudo em dia!',text:'Todas as tarefas concluídas. Crie novos conteúdos.'};
-}
-
-/* ═══ PLANNER ═══ */
-const PRIO_MAP={ALTA:{label:'Alta',cls:'prio-alta',dot:'#ff5f5f'},MEDIA:{label:'Média',cls:'prio-media',dot:'#f5a623'},BAIXA:{label:'Baixa',cls:'prio-baixa',dot:'#22d3a0'}};
-function renderPlanner(){
-  const el=document.getElementById('planner-content');
-  if(!DB.plans.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Nenhum plano criado.</div></div>`;return;}
-  el.innerHTML=DB.plans.map(plan=>{
-    const pct=planPct(plan.id);const mods=DB.modules.filter(m=>m.planId===plan.id);const est=estimatePlan(plan.id);
-    return `<div class="card" style="margin-bottom:0"><div style="display:flex;align-items:center;gap:9px;margin-bottom:11px"><div style="width:9px;height:9px;border-radius:50%;background:${plan.color||'#6c8eff'}"></div><div class="editable" style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;flex:1" ondblclick="inlineEdit(this,'plans','title','${plan.id}')">${plan.title}</div><span style="font-size:12px;font-weight:700;color:${plan.color||'#6c8eff'}">${pct}%</span>${est?`<span class="estimate">${est}</span>`:''}<button class="btn btn-icon btn-sm btn-danger" onclick="delPlan('${plan.id}')">✕</button></div><div class="prog-bar" style="margin-bottom:13px"><div class="prog-fill" style="width:${pct}%;background:${plan.color||'#6c8eff'}"></div></div><div class="module-tree">${mods.map(m=>renderMod(m)).join('')}</div>${!mods.length?'<div class="empty" style="padding:16px"><div class="empty-text" style="font-size:11.5px">Sem módulos.</div></div>':''}</div>`;
-  }).join('<div style="height:14px"></div>');
-}
-function renderMod(mod){
-  const topics=DB.topics.filter(t=>t.moduleId===mod.id);const pct=modPct(mod.id);
-  return `<div class="mod-item open" id="mod-${mod.id}"><div class="mod-header" onclick="toggleMod('${mod.id}')"><span class="mod-arrow">▶</span><div class="mod-name editable" ondblclick="event.stopPropagation();inlineEdit(this,'modules','title','${mod.id}')">${mod.title}</div><span style="font-size:10.5px;color:var(--text3)">${pct}%</span><button class="btn btn-icon btn-sm" style="width:22px;height:22px;font-size:11px;margin-left:4px" onclick="event.stopPropagation();delMod('${mod.id}')">✕</button></div><div class="mod-topics">${topics.map(t=>renderTopic(t)).join('')}${!topics.length?'<div style="font-size:11.5px;color:var(--text3);padding:5px 0">Sem tópicos.</div>':''}</div></div>`;
-}
-function renderTopic(topic){
-  const tasks=DB.tasks.filter(t=>t.topicId===topic.id);const done=tasks.filter(t=>t.done).length;
-  const note=(DB.notes||{})[topic.id]||'';const topicMins=topicPomoMins(topic.id);
-  return `<div><div class="topic-item" onclick="toggleTopTasks('${topic.id}')"><div class="topic-icon">📌</div><div class="topic-name editable" ondblclick="event.stopPropagation();inlineEdit(this,'topics','title','${topic.id}')">${topic.title}</div><div class="topic-count">${done}/${tasks.length}</div>${topicMins?`<div class="topic-mins">⏱ ${topicMins}min</div>`:''}<button class="btn btn-icon btn-sm" style="width:18px;height:18px;font-size:10px" onclick="event.stopPropagation();delTopic('${topic.id}')">✕</button></div><div id="tasks-${topic.id}" style="display:none;padding:7px 9px 4px;flex-direction:column;gap:3px">${tasks.sort((a,b)=>(a.done?1:-1)).map(t=>renderTI(t)).join('')}<div style="margin-top:7px"><div style="font-size:10.5px;color:var(--text3);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Notas</div><textarea class="notes-area" rows="3" placeholder="Anote aqui…" oninput="saveNote('${topic.id}',this.value)">${note}</textarea></div></div></div>`;
-}
-function renderTI(t){
-  const p=PRIO_MAP[t.priority];
-  return `<div class="task-item ${t.done?'done':''}"><div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}');event.stopPropagation()"><svg width="9" height="9" viewBox="0 0 10 10"><polyline points="1.5 5 4 7.5 8.5 2.5" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="task-text editable" ondblclick="event.stopPropagation();inlineEdit(this,'tasks','title','${t.id}')">${t.title}</div>${p?`<span class="prio ${p.cls}">${p.label}</span>`:''}<div class="task-mins">${t.mins?t.mins+'min':''}</div><div class="task-xp">+${t.priority==='ALTA'?15:t.priority==='MEDIA'?12:10} XP</div><button class="btn btn-icon btn-sm" style="width:18px;height:18px;font-size:9px;flex-shrink:0" onclick="delTask('${t.id}');event.stopPropagation()">✕</button></div>`;
-}
-function toggleMod(id){document.getElementById('mod-'+id).classList.toggle('open');}
-function toggleTopTasks(id){const el=document.getElementById('tasks-'+id);el.style.display=el.style.display==='flex'?'none':'flex';}
-function saveNote(tid,v){if(!DB.notes)DB.notes={};DB.notes[tid]=v;save();}
-function inlineEdit(el,coll,field,id){
-  const cur=el.textContent;const inp=document.createElement('input');inp.className='inline-edit';inp.value=cur;
-  inp.style.cssText=`font-size:${getComputedStyle(el).fontSize};font-weight:${getComputedStyle(el).fontWeight}`;
-  el.replaceWith(inp);inp.focus();inp.select();
-  const commit=()=>{const val=inp.value.trim()||cur;const item=DB[coll]?.find(x=>x.id===id);if(item){item[field]=val;save();}inp.replaceWith(el);el.textContent=val;};
-  inp.onblur=commit;inp.onkeydown=e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape')inp.replaceWith(el);};
-}
-function toggleTask(id){
-  const t=DB.tasks.find(t=>t.id===id);if(!t)return;
-  t.done=!t.done;t.doneAt=t.done?new Date().toISOString():null;
-  if(t.done){
-    const xpBonus=t.priority==='ALTA'?15:t.priority==='MEDIA'?12:10;
-    grantXP('task',xpBonus);
-    const tp=DB.topics.find(x=>x.id===t.topicId);const m=tp?DB.modules.find(x=>x.id===tp.moduleId):null;
-    if(m){const all=DB.topics.filter(x=>x.moduleId===m.id).flatMap(x=>DB.tasks.filter(k=>k.topicId===x.id));if(all.length&&all.every(k=>k.done)){grantXP('module');launchConfetti();}}
-    logAct(tStr());
-  }
-  save();renderPage(document.querySelector('.page.active').id.replace('page-',''));updateTopbar();
-}
-function delPlan(id){DB.modules.filter(m=>m.planId===id).forEach(m=>{DB.topics.filter(t=>t.moduleId===m.id).forEach(t=>{DB.tasks=DB.tasks.filter(k=>k.topicId!==t.id);});DB.topics=DB.topics.filter(t=>t.moduleId!==m.id);});DB.modules=DB.modules.filter(m=>m.planId!==id);DB.plans=DB.plans.filter(p=>p.id!==id);save();renderPlanner();}
-function delMod(id){DB.topics.filter(t=>t.moduleId===id).forEach(t=>{DB.tasks=DB.tasks.filter(k=>k.topicId!==t.id);});DB.topics=DB.topics.filter(t=>t.moduleId!==id);DB.modules=DB.modules.filter(m=>m.id!==id);save();renderPlanner();}
-function delTopic(id){DB.tasks=DB.tasks.filter(t=>t.topicId!==id);DB.topics=DB.topics.filter(t=>t.id!==id);save();renderPlanner();}
-function delTask(id){DB.tasks=DB.tasks.filter(t=>t.id!==id);save();renderPlanner();}
-
-/* ═══ POMODORO ═══ */
-let pomoTimer=null,pomoState={phase:'FOCUS',timeLeft:0,running:false,cycles:0};
-const getPD=()=>({FOCUS:((DB.prefs?.focusMins)||25)*60,SHORT_BREAK:((DB.prefs?.shortMins)||5)*60,LONG_BREAK:((DB.prefs?.longMins)||15)*60});
-function renderPomo(){
-  const sel=document.getElementById('pomo-topic-sel');
-  sel.innerHTML='<option value="">— selecionar tópico —</option>'+DB.topics.map(t=>`<option value="${t.id}">${t.title}</option>`).join('');
-  updateDots();renderPomoSess();renderHours();renderTopicTime();
-}
-function updateDots(){const el=document.getElementById('pomo-dots');if(!el)return;el.innerHTML=[0,1,2,3].map(i=>`<div class="pomo-dot ${i<pomoState.cycles%4?'done':i===pomoState.cycles%4&&pomoState.running&&pomoState.phase==='FOCUS'?'active':''}"></div>`).join('');}
-function updatePomoDisplay(){
-  const t=pomoState.timeLeft;const str=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
-  const d=document.getElementById('pomo-display');if(d)d.textContent=str;
-  const ph=document.getElementById('pomo-phase');if(ph)ph.textContent={FOCUS:'Foco 🎯',SHORT_BREAK:'Pausa ☕',LONG_BREAK:'Pausa longa 🛌'}[pomoState.phase];
-  const arc=document.getElementById('pomo-arc');
-  if(arc){const circ=540;arc.setAttribute('stroke-dashoffset',circ*(1-pomoState.timeLeft/getPD()[pomoState.phase]));arc.setAttribute('stroke',{FOCUS:'#6c8eff',SHORT_BREAK:'#22d3a0',LONG_BREAK:'#a78bfa'}[pomoState.phase]);}
-  document.getElementById('pomo-ring')?.classList.toggle('pomo-running',pomoState.running&&pomoState.phase==='FOCUS');
-  updateFD();updateMiniPomo();document.title=pomoState.running?str+' — StudyFlow':'StudyFlow';
-}
-function pomodoroToggle(){
-  if(pomoState.running){clearInterval(pomoTimer);pomoTimer=null;pomoState.running=false;const b=document.getElementById('pomo-btn');if(b)b.textContent='▶ Continuar';}
-  else{if(pomoState.timeLeft===0)pomoState.timeLeft=getPD()[pomoState.phase];pomoState.running=true;const b=document.getElementById('pomo-btn');if(b)b.textContent='⏸ Pausar';pomoTimer=setInterval(()=>{pomoState.timeLeft--;updatePomoDisplay();updateDots();if(pomoState.timeLeft<=0)completePhase();},1000);}
-  updatePomoDisplay();
-}
-function pomodoroReset(){clearInterval(pomoTimer);pomoTimer=null;pomoState={phase:'FOCUS',timeLeft:getPD().FOCUS,running:false,cycles:pomoState.cycles};const b=document.getElementById('pomo-btn');if(b)b.textContent='▶ Iniciar';updatePomoDisplay();updateDots();document.title='StudyFlow';}
-function completePhase(){
-  clearInterval(pomoTimer);pomoTimer=null;pomoState.running=false;
-  const tid=document.getElementById('pomo-topic-sel')?.value||null;
-  DB.pomodoro.push({id:uid(),type:pomoState.phase,date:tStr(),topicId:tid,createdAt:new Date().toISOString()});save();
-  if(DB.prefs?.sound)playBeep();
-  sendBrowserNotif(pomoState.phase==='FOCUS'?'🎯 Pomodoro concluído! Hora da pausa.':'☕ Pausa encerrada! Hora de focar.');
-  if(pomoState.phase==='FOCUS'){pomoState.cycles++;grantXP('pomodoro');showToast('Pomodoro concluído! 🎯','green');pomoState.phase=pomoState.cycles%4===0?'LONG_BREAK':'SHORT_BREAK';}
-  else{showToast('Pausa encerrada! 💪','accent');pomoState.phase='FOCUS';}
-  pomoState.timeLeft=getPD()[pomoState.phase];const b=document.getElementById('pomo-btn');if(b)b.textContent='▶ Iniciar';
-  updatePomoDisplay();updateDots();renderPomoSess();renderTopicTime();exitFocus();
-}
-function renderPomoSess(){
-  const today=DB.pomodoro.filter(p=>p.date===tStr());const el=document.getElementById('pomo-sessions');if(!el)return;
-  el.innerHTML=!today.length?'<div style="font-size:12px;color:var(--text3)">Nenhuma sessão hoje.</div>':[...today].reverse().map(p=>{const tp=DB.topics.find(t=>t.id===p.topicId);return `<div style="display:flex;align-items:center;gap:7px;padding:7px 9px;background:var(--bg3);border-radius:7px;font-size:11.5px"><span>${{FOCUS:'🎯 Foco',SHORT_BREAK:'☕ Pausa curta',LONG_BREAK:'🛌 Pausa longa'}[p.type]}</span>${tp?`<span style="color:var(--text3)">— ${tp.title}</span>`:''}</div>`;}).join('');
-  const se=document.getElementById('pomo-stats');if(se){const tf=pomoFocusCount();se.innerHTML=`<div class="badge badge-xp">🎯 ${tf} foco</div><div class="badge badge-green">⏱ ${tf*((DB.prefs?.focusMins)||25)}min</div>`;}
-}
-function renderHours(){
-  const el=document.getElementById('hour-bars');if(!el)return;
-  const c=Array(24).fill(0);DB.pomodoro.filter(p=>p.type==='FOCUS').forEach(p=>{c[new Date(p.createdAt||0).getHours()]++;});
-  const mx=Math.max(...c,1);
-  el.innerHTML=c.map((v,h)=>`<div class="hour-bar" style="height:${Math.max(4,Math.round(v/mx*100))}%;background:${v?'rgba(108,142,255,'+(0.3+v/mx*0.7)+')':'rgba(108,142,255,.06)'}" title="${h}h — ${v}x"></div>`).join('');
-}
-function renderTopicTime(){
-  const el=document.getElementById('topic-time-list');if(!el)return;
-  const data=DB.topics.map(t=>({name:t.title,mins:topicPomoMins(t.id)})).filter(x=>x.mins>0).sort((a,b)=>b.mins-a.mins).slice(0,6);
-  if(!data.length){el.innerHTML='<div style="font-size:11.5px;color:var(--text3)">Estude usando os tópicos para ver o tempo aqui.</div>';return;}
-  const mx=Math.max(...data.map(x=>x.mins),1);
-  el.innerHTML=data.map(x=>`<div class="topic-time-row"><div class="tt-name">${x.name}</div><div class="tt-bar"><div class="tt-fill" style="width:${Math.round(x.mins/mx*100)}%"></div></div><div class="tt-time">${x.mins}min</div></div>`).join('');
-}
-function enterFocus(){if(!pomoState.running)pomodoroToggle();document.getElementById('focus-overlay').classList.add('open');spawnP();updateFD();}
-function exitFocus(){document.getElementById('focus-overlay').classList.remove('open');}
-function updateFD(){
-  const t=pomoState.timeLeft;const str=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
-  const e=document.getElementById('focus-time');if(e)e.textContent=str;
-  const l=document.getElementById('focus-lbl');if(l)l.textContent={FOCUS:'Foco profundo',SHORT_BREAK:'Pausa curta',LONG_BREAK:'Pausa longa'}[pomoState.phase];
-  const tl=document.getElementById('focus-topic');if(tl){const tid=document.getElementById('pomo-topic-sel')?.value;const tp=tid?DB.topics.find(t=>t.id===tid):null;tl.textContent=tp?tp.title:'';}
-  const fb=document.getElementById('focus-btn');if(fb)fb.textContent=pomoState.running?'⏸ Pausar':'▶ Continuar';
-}
-function spawnP(){
-  const c=document.getElementById('fp');c.innerHTML='';const cols=['#6c8eff','#a78bfa','#22d3a0','#ff6eb4'];
-  for(let i=0;i<18;i++){const p=document.createElement('div');p.className='particle';const sz=Math.random()*5+2;p.style.cssText=`width:${sz}px;height:${sz}px;background:${cols[i%4]};left:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${6+Math.random()*4}s`;c.appendChild(p);}
-}
-function updateMiniPomo(){
-  const onP=document.getElementById('page-pomodoro')?.classList.contains('active');
-  const mp=document.getElementById('mini-pomo');
-  if(pomoState.running&&!onP&&DB.prefs?.miniWidget!==false)mp.classList.add('visible');else mp.classList.remove('visible');
-  const t=pomoState.timeLeft;const str=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
-  const mt=document.getElementById('mini-time');if(mt)mt.textContent=str;
-  const mp2=document.getElementById('mini-ph');if(mp2)mp2.textContent={FOCUS:'Foco 🎯',SHORT_BREAK:'Pausa ☕',LONG_BREAK:'Pausa longa'}[pomoState.phase];
-  const dot=document.getElementById('mini-dot');if(dot)dot.classList.toggle('run',pomoState.running);
-}
-function playBeep(){try{const ctx=new(window.AudioContext||window.webkitAudioContext)();[0,.15,.3].forEach(d=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.3,ctx.currentTime+d);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+d+.2);o.start(ctx.currentTime+d);o.stop(ctx.currentTime+d+.25);});}catch(e){}}
-
-/* ═══ BROWSER NOTIFICATIONS ═══ */
-function sendBrowserNotif(msg){
-  if(!DB.prefs?.notifications)return;
-  if(Notification.permission==='granted')new Notification('StudyFlow',{body:msg,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><text y="24" font-size="28">📚</text></svg>'});
-}
-async function toggleNotif(on){
-  if(!DB.prefs)DB.prefs={};
-  if(on&&Notification.permission!=='granted'){
-    const perm=await Notification.requestPermission();
-    if(perm!=='granted'){showToast('Permissão negada pelo browser','red');const el=document.getElementById('set-notif');if(el)el.checked=false;return;}
-  }
-  DB.prefs.notifications=on;save();showToast(on?'Notificações ativadas 🔔':'Notificações desativadas','accent');
-}
-
-/* ═══ FLASHCARDS ═══ */
-let reviewQ=[],reviewI=0,fcTagFilter='';
-function getAllFCTags(){const tags=new Set();DB.flashcards.forEach(f=>(f.tags||[]).forEach(t=>tags.add(t)));return [...tags];}
-function getDueFC(){
-  const today=tStr();
-  return DB.flashcards.filter(fc=>{
-    if(fcTagFilter&&!(fc.tags||[]).includes(fcTagFilter))return false;
-    const revs=DB.reviews.filter(r=>r.fcId===fc.id);if(!revs.length)return true;
-    const last=revs.sort((a,b)=>new Date(b.reviewedAt)-new Date(a.reviewedAt))[0];return last.nextReview<=today;
-  });
-}
-function filterFC(tag){
-  fcTagFilter=tag;
-  document.getElementById('tag-all')?.classList.toggle('active',tag==='');
-  document.querySelectorAll('[data-tag]').forEach(el=>el.classList.toggle('active',el.dataset.tag===tag));
-  renderFC();
-}
-function renderFC(){
-  const due=getDueFC();const db=document.getElementById('fc-due-badge');
-  if(due.length){db.style.display='inline-flex';db.textContent=due.length+' para revisar';}else db.style.display='none';
-  document.getElementById('fc-review-area').style.display=reviewQ.length?'block':'none';
-  document.getElementById('fc-count').textContent=DB.flashcards.length;
-  // tag filter row
-  const tags=getAllFCTags();
-  document.getElementById('tag-list-filter').innerHTML=tags.map(tag=>`<span class="fc-tag ${fcTagFilter===tag?'active':''}" data-tag="${tag}" onclick="filterFC('${tag}')">${tag}</span>`).join('');
-  // list
-  const show=fcTagFilter?DB.flashcards.filter(f=>(f.tags||[]).includes(fcTagFilter)):DB.flashcards;
-  const el=document.getElementById('fc-list');
-  if(!show.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🃏</div><div class="empty-text">${fcTagFilter?'Nenhum flashcard com essa tag.':'Nenhum flashcard criado.'}</div></div>`;return;}
-  el.innerHTML=show.map(fc=>{
-    const isDue=due.find(d=>d.id===fc.id);const revs=DB.reviews.filter(r=>r.fcId===fc.id);
-    const last=revs.length?revs.sort((a,b)=>new Date(b.reviewedAt)-new Date(a.reviewedAt))[0]:null;
-    const tags=(fc.tags||[]).map(t=>`<span class="fc-tag" style="font-size:9px;padding:1px 6px">${t}</span>`).join('');
-    return `<div style="background:var(--bg3);border:1px solid ${isDue?'rgba(108,142,255,.28)':'var(--border)'};border-radius:var(--r);padding:12px"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Pergunta</div><div style="font-size:12.5px;font-weight:500;margin-bottom:7px">${fc.front}</div><div style="font-size:10.5px;color:var(--text2);margin-bottom:8px">${fc.back}</div>${tags?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">${tags}</div>`:''}<div style="display:flex;align-items:center;gap:6px">${isDue?'<span class="badge badge-xp" style="font-size:9.5px">Revisão pendente</span>':''}${last?`<span style="font-size:9.5px;color:var(--text3)">Próx: ${last.nextReview}</span>`:'<span style="font-size:9.5px;color:var(--text3)">Nunca revisado</span>'}</div><button class="btn btn-sm btn-danger" style="margin-top:7px;padding:2px 7px;font-size:10.5px;width:auto" onclick="delFC('${fc.id}')">Remover</button></div>`;
-  }).join('');
-}
-function startReview(){reviewQ=getDueFC();if(!reviewQ.length){showToast('Nenhum flashcard para revisar!','amber');return;}reviewI=0;showRC();document.getElementById('fc-review-area').style.display='block';}
-function showRC(){
-  if(reviewI>=reviewQ.length){document.getElementById('fc-review-area').style.display='none';showToast('Revisão completa! 🎉','green');reviewQ=[];return;}
-  const fc=reviewQ[reviewI];document.getElementById('fc-front').textContent=fc.front;document.getElementById('fc-back-text').textContent=fc.back;
-  document.getElementById('fc-card').classList.remove('flipped');document.getElementById('fc-progress').textContent=`${reviewI+1} / ${reviewQ.length}`;
-}
-function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');}
-function rateCard(d){
-  const fc=reviewQ[reviewI];const nr=dStr(new Date(Date.now()+({EASY:7,MEDIUM:3,HARD:1}[d])*86400000));
-  DB.reviews.push({id:uid(),fcId:fc.id,difficulty:d,reviewedAt:new Date().toISOString(),nextReview:nr});
-  grantXP('flashcard');save();reviewI++;showRC();renderFC();
-}
-function delFC(id){DB.flashcards=DB.flashcards.filter(f=>f.id!==id);DB.reviews=DB.reviews.filter(r=>r.fcId!==id);save();renderFC();}
-
-/* ═══ CALENDAR ═══ */
-let calDate=new Date();
-function renderCal(){
-  const yr=calDate.getFullYear(),mo=calDate.getMonth();
-  document.getElementById('cal-title').textContent=calDate.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  document.getElementById('cal-wdays').innerHTML=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d=>`<div class="cal-weekday">${d}</div>`).join('');
-  const fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate();const td=tStr(),sd=DB.sessions.map(s=>s.date);
-  let days=[];const pd=new Date(yr,mo,0).getDate();
-  for(let i=fd-1;i>=0;i--)days.push({day:pd-i,other:true});
-  for(let d=1;d<=dim;d++){const ds=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;days.push({day:d,ds,isToday:ds===td,hasSess:sd.includes(ds)});}
-  for(let d=1;days.length<42;d++)days.push({day:d,other:true});
-  document.getElementById('cal-days').innerHTML=days.map(d=>`<div class="cal-day ${d.other?'other-month':''} ${d.isToday?'today':''} ${d.hasSess&&!d.other?'has-session':''}">${d.day}</div>`).join('');
-  const s=[...DB.sessions].sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('cal-sessions').innerHTML=!s.length?'<div style="font-size:12px;color:var(--text3)">Nenhuma sessão.</div>':s.map(x=>`<div style="display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg3);border-radius:var(--r)"><div style="font-size:11.5px;color:var(--text3);min-width:78px">${x.date}</div><div style="flex:1;font-size:12.5px">${x.title}</div><div class="badge badge-green">${x.duration}min</div><button class="btn btn-icon btn-sm btn-danger" style="width:22px;height:22px;font-size:10px" onclick="delSess('${x.id}')">✕</button></div>`).join('');
-}
-function calNav(d){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+d,1);renderCal();}
-function delSess(id){DB.sessions=DB.sessions.filter(s=>s.id!==id);save();renderCal();}
-
-/* ═══ ANALYTICS ═══ */
-function renderAnalytics(){
-  const fm=(DB.prefs?.focusMins)||25;const tf=pomoFocusCount();
-  document.getElementById('analytics-metrics').innerHTML=`<div class="metric"><div class="metric-label">Total estudado</div><div class="metric-value" style="color:var(--accent)">${(tf*fm/60).toFixed(1)}h</div><div class="metric-sub">${tf} pomodoros</div></div><div class="metric"><div class="metric-label">Tarefas concluídas</div><div class="metric-value" style="color:var(--green)">${DB.tasks.filter(t=>t.done).length}</div><div class="metric-sub">de ${DB.tasks.length} totais</div></div><div class="metric"><div class="metric-label">Streak atual</div><div class="metric-value" style="color:var(--amber)">${DB.user.streak}</div><div class="metric-sub">dias seguidos</div></div><div class="metric"><div class="metric-label">Revisões FC</div><div class="metric-value" style="color:var(--pink)">${DB.reviews.length}</div><div class="metric-sub">flashcards revisados</div></div>`;
-  if(cP){cP.destroy();cP=null;}if(DB.plans.length)cP=new Chart(document.getElementById('chart-plans'),{type:'doughnut',data:{labels:DB.plans.map(p=>p.title),datasets:[{data:DB.plans.map(p=>planPct(p.id)||0),backgroundColor:DB.plans.map(p=>p.color||'#6c8eff'),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8b91a8',font:{size:11}}}}}});
-  // Topic distribution chart
-  if(cTD){cTD.destroy();cTD=null;}
-  const topicData=DB.topics.map(t=>({label:t.title,mins:topicPomoMins(t.id)})).filter(x=>x.mins>0).sort((a,b)=>b.mins-a.mins).slice(0,8);
-  if(topicData.length)cTD=new Chart(document.getElementById('chart-topic-dist'),{type:'bar',data:{labels:topicData.map(x=>x.label.length>12?x.label.slice(0,12)+'…':x.label),datasets:[{data:topicData.map(x=>x.mins),backgroundColor:'rgba(167,139,250,.5)',borderColor:'#a78bfa',borderWidth:2,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#555c75',callback:v=>v+'min'},grid:{color:'rgba(255,255,255,.03)'}},y:{ticks:{color:'#555c75'},grid:{display:false}}}}});
-  if(cT){cT.destroy();cT=null;}const l7=last7();
-  cT=new Chart(document.getElementById('chart-tasks'),{type:'line',data:{labels:l7.map(d=>d.slice(5)),datasets:[{data:l7.map(d=>DB.tasks.filter(t=>t.doneAt&&dStr(new Date(t.doneAt))===d).length),borderColor:'#22d3a0',backgroundColor:'rgba(34,211,160,.08)',fill:true,tension:.4,pointBackgroundColor:'#22d3a0',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#555c75'},grid:{color:'rgba(255,255,255,.03)'}},y:{ticks:{color:'#555c75',stepSize:1},grid:{color:'rgba(255,255,255,.03)'}}}}});
-  const d56=Array.from({length:56},(_,i)=>{const d=new Date(Date.now()-(55-i)*86400000);return dStr(d);});
-  document.getElementById('streak-heatmap').innerHTML=d56.map(d=>{const c=DB.pomodoro.filter(p=>p.date===d&&p.type==='FOCUS').length;return `<div class="streak-day ${c>=3?'active':c>=1?'partial':''}" title="${d}: ${c} pomodoros"></div>`;}).join('');
-}
-
-/* ═══ SETTINGS ═══ */
-function renderSettings(){
-  const ni=document.getElementById('set-name');if(ni)ni.value=DB.user.name||'';
-  const sl=document.getElementById('set-light');if(sl)sl.checked=DB.prefs?.light||false;
-  const ss=document.getElementById('set-sound');if(ss)ss.checked=DB.prefs?.sound!==false;
-  const sn=document.getElementById('set-notif');if(sn)sn.checked=DB.prefs?.notifications||false;
-  const sw=document.getElementById('set-widget');if(sw)sw.checked=DB.prefs?.miniWidget!==false;
-  const vals={focus:DB.prefs?.focusMins||25,short:DB.prefs?.shortMins||5,long:DB.prefs?.longMins||15};
-  Object.entries(vals).forEach(([k,v])=>{const e=document.getElementById('set-'+k);if(e)e.value=v;const l=document.getElementById('lbl-'+k);if(l)l.textContent=v;});
-}
-function saveSettings(){const n=document.getElementById('set-name')?.value.trim();if(n){DB.user.name=n;updateTopbar();}save();showToast('Perfil salvo!','green');}
-function savePomoDurations(){if(!DB.prefs)DB.prefs={};DB.prefs.focusMins=parseInt(document.getElementById('set-focus').value)||25;DB.prefs.shortMins=parseInt(document.getElementById('set-short').value)||5;DB.prefs.longMins=parseInt(document.getElementById('set-long').value)||15;save();pomodoroReset();showToast('Durações atualizadas!','green');}
-function updateRangeLabel(k,v){const l=document.getElementById('lbl-'+k);if(l)l.textContent=v;}
-function toggleTheme(b){document.body.classList.toggle('light',b);if(!DB.prefs)DB.prefs={};DB.prefs.light=b;save();}
-/* importData — sistema de importação com merge seguro */
-let _pendingImport=null;
-
-function importData(inp){
-  const f=inp.files[0];if(!f)return;
-  inp.value='';
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const d=JSON.parse(e.target.result);
-      if(!Array.isArray(d.plans)||!Array.isArray(d.tasks)){showToast('Arquivo inválido','red');return;}
-      _pendingImport=d;
-      _showImportChoice();
-    }catch(err){showToast('Erro ao ler o arquivo JSON','red');}
-  };
-  r.readAsText(f);
-}
-
-function _showImportChoice(){
-  const d=_pendingImport;
-  const planNames=(d.plans||[]).map(p=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border)"><div style="width:8px;height:8px;border-radius:50%;background:${p.color||'#6c8eff'};flex-shrink:0"></div><span style="font-size:12.5px">${p.title}</span></div>`).join('');
-  document.getElementById('modal-title').textContent='📥 Importar plano de estudos';
-  document.getElementById('modal-body').innerHTML=`
-    <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Encontrei <strong style="color:var(--text)">${d.plans.length} plano(s)</strong> no arquivo:</div>
-    <div style="margin-bottom:16px;max-height:140px;overflow-y:auto">${planNames}</div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <button class="btn btn-primary" style="justify-content:flex-start;gap:10px;padding:10px 14px" onclick="_doMerge()">
-        <span style="font-size:18px">➕</span>
-        <div style="text-align:left"><div style="font-weight:600;font-size:13px">Adicionar aos meus planos</div><div style="font-size:11px;opacity:.7;margin-top:1px">Mantém tudo que você já tem e adiciona os novos</div></div>
-      </button>
-      <button class="btn" style="justify-content:flex-start;gap:10px;padding:10px 14px;border-color:var(--red);color:var(--red)" onclick="_doFullReplace()">
-        <span style="font-size:18px">🔄</span>
-        <div style="text-align:left"><div style="font-weight:600;font-size:13px">Substituir tudo</div><div style="font-size:11px;opacity:.7;margin-top:1px">Apaga TODOS os dados atuais e carrega este arquivo</div></div>
-      </button>
-    </div>`;
-  document.querySelector('.modal-actions').style.display='none';
-  document.getElementById('modal-bg').classList.add('open');
-}
-
-function _doMerge(){
-  document.getElementById('modal-bg').classList.remove('open');
-  document.querySelector('.modal-actions').style.display='';
-  const d=_pendingImport; _pendingImport=null;
-  if(!d)return;
-  ['plans','modules','topics','tasks','flashcards','reviews','sessions'].forEach(key=>{
-    const seen=new Set((DB[key]||[]).map(x=>x.id));
-    (d[key]||[]).forEach(item=>{if(!seen.has(item.id))DB[key].push(item);});
-  });
-  if(d.notes&&typeof d.notes==='object'){if(!DB.notes)DB.notes={};Object.assign(DB.notes,d.notes);}
-  if(Array.isArray(d.activityLog))d.activityLog.forEach(dt=>{if(!DB.activityLog.includes(dt))DB.activityLog.push(dt);});
-  if(Array.isArray(d.achievements))d.achievements.forEach(a=>{if(!DB.achievements.includes(a))DB.achievements.push(a);});
-  save();
-  showToast(`✅ ${d.plans.length} plano(s) importado(s)!`,'green');
-  setTimeout(()=>location.reload(),1500);
-}
-
-function _doFullReplace(){
-  if(!confirm('Isso vai APAGAR todos os seus planos e histórico.\n\nTem certeza?'))return;
-  document.getElementById('modal-bg').classList.remove('open');
-  document.querySelector('.modal-actions').style.display='';
-  const d=_pendingImport; _pendingImport=null;
-  if(!d)return;
-  const savedPrefs=DB.prefs;
-  Object.assign(DB,d);
-  if(!d.prefs)DB.prefs=savedPrefs;
-  save();
-  showToast('Backup restaurado!','green');
-  setTimeout(()=>location.reload(),1000);
-}
-
-function exportData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));a.download=`studyflow-backup-${tStr()}.json`;a.click();showToast('Backup exportado!','green');}
-function resetData(){localStorage.removeItem(SKEY);location.reload();}
-
-/* ═══ MODAL ═══ */
-let mType='';
-function openModal(type){
-  mType=type;
-  const titles={plan:'Novo Plano',module:'Novo Módulo',topic:'Novo Tópico',task:'Nova Tarefa',fc:'Novo Flashcard',session:'Registrar Sessão'};
-  document.getElementById('modal-title').textContent=titles[type]||type;
-  document.getElementById('modal-body').innerHTML=buildMB(type);
-  document.getElementById('modal-bg').classList.add('open');
-  setTimeout(()=>document.querySelector('.modal input,.modal textarea')?.focus(),50);
-}
-function closeModal(){document.getElementById("modal-bg").classList.remove("open");const ma=document.querySelector(".modal-actions");if(ma)ma.style.display="";}
-function buildMB(t){
-  if(t==='plan')return`<div class="field"><label>Título *</label><input id="m-title" placeholder="Ex: Desenvolvimento Web"/></div><div class="field"><label>Descrição</label><textarea id="m-desc" rows="2" placeholder="Opcional"></textarea></div><div class="field"><label>Cor</label><input type="color" id="m-color" value="#6c8eff" style="height:34px;padding:3px;cursor:pointer"/></div>`;
-  if(t==='module'){const o=DB.plans.map(p=>`<option value="${p.id}">${p.title}</option>`).join('');return !DB.plans.length?'<p style="color:var(--text2)">Crie um plano primeiro.</p>':`<div class="field"><label>Plano *</label><select id="m-plan">${o}</select></div><div class="field"><label>Nome *</label><input id="m-title" placeholder="Ex: HTML & CSS"/></div>`;}
-  if(t==='topic'){const o=DB.modules.map(m=>`<option value="${m.id}">${m.title}</option>`).join('');return !DB.modules.length?'<p style="color:var(--text2)">Crie um módulo primeiro.</p>':`<div class="field"><label>Módulo *</label><select id="m-mod">${o}</select></div><div class="field"><label>Nome *</label><input id="m-title" placeholder="Ex: Flexbox"/></div>`;}
-  if(t==='task'){const o=DB.topics.map(x=>`<option value="${x.id}">${x.title}</option>`).join('');return !DB.topics.length?'<p style="color:var(--text2)">Crie um tópico primeiro.</p>':`<div class="field"><label>Tópico *</label><select id="m-topic">${o}</select></div><div class="field"><label>Tarefa *</label><input id="m-title" placeholder="Ex: Estudar display flex"/></div><div class="field"><label>Prioridade</label><select id="m-prio"><option value="">— sem prioridade —</option><option value="ALTA">🔴 Alta (+15 XP)</option><option value="MEDIA">🟡 Média (+12 XP)</option><option value="BAIXA">🟢 Baixa (+10 XP)</option></select></div><div class="field"><label>Tempo estimado (min)</label><input type="number" id="m-mins" placeholder="25"/></div>`;}
-  if(t==='fc'){const o=DB.topics.length?DB.topics.map(x=>`<option value="${x.id}">${x.title}</option>`).join(''):'';return`<div class="field"><label>Pergunta *</label><textarea id="m-front" rows="2" placeholder="O que é...?"></textarea></div><div class="field"><label>Resposta *</label><textarea id="m-back" rows="2" placeholder="É a..."></textarea></div><div class="field"><label>Tags (separe por vírgula)</label><input id="m-tags" placeholder="Ex: JavaScript, fundamentos, async"/></div>${o?`<div class="field"><label>Tópico</label><select id="m-topic"><option value="">—</option>${o}</select></div>`:''}`;}
-  if(t==='session')return`<div class="field"><label>Título *</label><input id="m-title" placeholder="Ex: Estudei React Hooks"/></div><div class="field"><label>Data</label><input type="date" id="m-date" value="${tStr()}"/></div><div class="field"><label>Duração (min) *</label><input type="number" id="m-mins" placeholder="60"/></div>`;
-  return '';
-}
-function saveModal(){
-  const v=id=>{const e=document.getElementById(id);return e?e.value.trim():null;};
-  if(mType==='plan'){const t=v('m-title');if(!t)return showToast('Título obrigatório','amber');DB.plans.push({id:uid(),title:t,description:v('m-desc')||'',color:v('m-color')||'#6c8eff',createdAt:new Date().toISOString()});save();closeModal();renderPlanner();showToast('Plano criado!','green');}
-  else if(mType==='module'){const t=v('m-title'),p=v('m-plan');if(!t||!p)return showToast('Preencha todos os campos','amber');DB.modules.push({id:uid(),planId:p,title:t,createdAt:new Date().toISOString()});save();closeModal();renderPlanner();showToast('Módulo criado!','green');}
-  else if(mType==='topic'){const t=v('m-title'),m=v('m-mod');if(!t||!m)return showToast('Preencha todos os campos','amber');DB.topics.push({id:uid(),moduleId:m,title:t,createdAt:new Date().toISOString()});save();closeModal();renderPlanner();showToast('Tópico criado!','green');}
-  else if(mType==='task'){const t=v('m-title'),tp=v('m-topic');if(!t||!tp)return showToast('Preencha todos os campos','amber');DB.tasks.push({id:uid(),topicId:tp,title:t,priority:v('m-prio')||null,mins:parseInt(v('m-mins'))||null,done:false,doneAt:null,createdAt:new Date().toISOString()});save();closeModal();renderPlanner();showToast('Tarefa adicionada!','green');}
-  else if(mType==='fc'){const f=v('m-front'),b=v('m-back');if(!f||!b)return showToast('Preencha frente e verso','amber');const tagsRaw=v('m-tags')||'';const tags=tagsRaw?tagsRaw.split(',').map(x=>x.trim()).filter(Boolean):[];DB.flashcards.push({id:uid(),front:f,back:b,tags,topicId:v('m-topic')||null,createdAt:new Date().toISOString()});save();closeModal();renderFC();showToast('Flashcard criado!','green');}
-  else if(mType==='session'){const t=v('m-title'),dur=parseInt(v('m-mins'));if(!t||!dur)return showToast('Preencha todos os campos','amber');const date=v('m-date')||tStr();DB.sessions.push({id:uid(),title:t,date,duration:dur,createdAt:new Date().toISOString()});logAct(date);save();closeModal();renderCal();showToast('Sessão registrada!','green');}
-}
-
-/* ═══ SEARCH ═══ */
-function openSearch(){document.getElementById('search-overlay').classList.add('open');const i=document.getElementById('search-input');i.value='';i.focus();renderSearch('');}
-function closeSearch(){document.getElementById('search-overlay').classList.remove('open');}
-function renderSearch(q){
-  const el=document.getElementById('search-results');const query=q.toLowerCase().trim();
-  if(!query){el.innerHTML='<div class="search-empty">Digite para buscar…</div>';return;}
-  const results=[];
-  DB.tasks.filter(t=>t.title.toLowerCase().includes(query)).slice(0,5).forEach(t=>{const tp=DB.topics.find(x=>x.id===t.topicId);results.push({icon:t.done?'✅':'☐',label:t.title,type:'Tarefa'+(tp?' · '+tp.title:''),go:'planner'});});
-  DB.topics.filter(t=>t.title.toLowerCase().includes(query)).slice(0,4).forEach(t=>{results.push({icon:'📌',label:t.title,type:'Tópico',go:'planner'});});
-  DB.flashcards.filter(f=>f.front.toLowerCase().includes(query)||f.back.toLowerCase().includes(query)||((f.tags||[]).some(x=>x.toLowerCase().includes(query)))).slice(0,4).forEach(f=>{results.push({icon:'🃏',label:f.front,type:'Flashcard'+(f.tags?.length?' · '+f.tags.join(', '):''),go:'flashcards'});});
-  DB.plans.filter(p=>p.title.toLowerCase().includes(query)).forEach(p=>{results.push({icon:'📚',label:p.title,type:'Plano',go:'planner'});});
-  if(!results.length){el.innerHTML=`<div class="search-empty">Nenhum resultado para "${q}"</div>`;return;}
-  el.innerHTML=results.map(r=>`<div class="search-result" onclick="closeSearch();goto('${r.go}',document.querySelector('[data-page=${r.go}]'))"><div class="search-result-icon">${r.icon}</div><div class="search-result-label">${r.label}</div><div class="search-result-type">${r.type}</div></div>`).join('');
-}
-
-/* ═══ CONFETTI ═══ */
-function launchConfetti(){
-  const cv=document.getElementById('confetti-canvas');cv.width=innerWidth;cv.height=innerHeight;const ctx=cv.getContext('2d');
-  const ps=Array.from({length:80},()=>({x:Math.random()*cv.width,y:-10,vx:(Math.random()-.5)*4,vy:Math.random()*3+2,color:['#6c8eff','#22d3a0','#f5a623','#ff6eb4','#a78bfa'][Math.floor(Math.random()*5)],size:Math.random()*8+3,rot:Math.random()*360,vr:(Math.random()-.5)*6,life:1}));
-  let f=0;(function tick(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.rot+=p.vr;p.life-=.008;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);ctx.restore();});f++;if(f<200&&ps.some(p=>p.life>0))requestAnimationFrame(tick);else ctx.clearRect(0,0,cv.width,cv.height);})();
-  showToast('🏆 Módulo completo! +100 XP','amber');
-}
-
-/* ═══ TOPBAR ═══ */
-function updateTopbar(){
-  document.getElementById('tb-streak').textContent='🔥 '+DB.user.streak;
-  document.getElementById('tb-xp').textContent='⚡ '+DB.user.xp+' XP';
-  document.getElementById('tb-lvl').textContent='Nível '+DB.user.level;
-  document.getElementById('sb-level').textContent='Nível '+DB.user.level+' · '+DB.user.xp+' XP';
-  const n=DB.user.name||'Estudante';
-  document.getElementById('sb-av').textContent=n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
-  document.getElementById('sb-name').textContent=n;
-}
-
-/* ═══ TOAST ═══ */
-function showToast(msg,type='accent'){const t=document.createElement('div');t.className='toast-item '+type;t.textContent=msg;document.getElementById('toast').appendChild(t);setTimeout(()=>t.remove(),3200);}
-
-/* ═══ HELPERS ═══ */
-function tStr(){return dStr(new Date());}function dStr(d){return d.toISOString().slice(0,10);}
-function last7(){return Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return dStr(d);});}
-
-/* ═══ KEYBOARD ═══ */
-document.addEventListener('keydown',e=>{
-  if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();openSearch();}
-  if(e.key==='Escape'){closeSearch();closeModal();exitFocus();}
-  if(e.key===' '&&document.getElementById('page-pomodoro')?.classList.contains('active')&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();pomodoroToggle();}
-});
-
-/* ═══ SEED ═══ */
-function seed(){
-  if(DB.plans.length)return;
-  const pid=uid(),m1=uid(),m2=uid(),t1=uid(),t2=uid(),t3=uid(),t4=uid();
-  DB.plans.push({id:pid,title:'Desenvolvimento Web',description:'Full stack moderno',color:'#6c8eff',createdAt:new Date().toISOString()});
-  DB.modules.push({id:m1,planId:pid,title:'HTML & CSS'},{id:m2,planId:pid,title:'JavaScript'});
-  DB.topics.push({id:t1,moduleId:m1,title:'Flexbox'},{id:t2,moduleId:m1,title:'Grid Layout'},{id:t3,moduleId:m2,title:'Promises'},{id:t4,moduleId:m2,title:'Async / Await'});
-  [{topicId:t1,title:'Entender display flex',done:true,priority:'ALTA'},{topicId:t1,title:'Praticar align-items',done:true,priority:'MEDIA'},{topicId:t1,title:'Praticar justify-content',done:false,priority:'MEDIA'},{topicId:t2,title:'grid-template-columns',done:false,priority:'ALTA'},{topicId:t2,title:'Criar layout com grid',done:false,priority:'BAIXA'},{topicId:t3,title:'Entender Promise.then',done:true,priority:'ALTA'},{topicId:t3,title:'Encadeamento de promises',done:false,priority:'MEDIA'},{topicId:t4,title:'Async functions',done:false,priority:'ALTA'},{topicId:t4,title:'Try/catch com await',done:false,priority:'BAIXA'}].forEach(x=>DB.tasks.push({id:uid(),...x,mins:30,doneAt:x.done?new Date().toISOString():null,createdAt:new Date().toISOString()}));
-  [{front:'O que é uma Promise?',back:'Objeto que representa a conclusão (ou falha) de uma operação assíncrona.',tags:['JavaScript','async']},{front:'Diferença entre == e === ?',back:'== faz coerção de tipo. === compara sem coerção. Prefira ===.',tags:['JavaScript','fundamentos']},{front:'O que é o Event Loop?',back:'Mecanismo que permite JS executar operações não bloqueantes via fila de callbacks.',tags:['JavaScript','avançado']}].forEach(f=>DB.flashcards.push({id:uid(),...f,topicId:t3,createdAt:new Date().toISOString()}));
-  for(let i=0;i<6;i++){const d=new Date();d.setDate(d.getDate()-i);const c=Math.floor(Math.random()*4)+1;for(let j=0;j<c;j++){const h=new Date(d);h.setHours(Math.floor(Math.random()*14)+8);DB.pomodoro.push({id:uid(),type:'FOCUS',date:dStr(d),topicId:[t1,t2,t3,t4][j%4],createdAt:h.toISOString()});}}
-  DB.user.xp=120;DB.user.level=2;DB.user.streak=3;DB.user.lastStudied=tStr();DB.activityLog=last7().slice(0,4);
-  Object.assign(DB.prefs,{sound:true,miniWidget:true,focusMins:25,shortMins:5,longMins:15,light:false,notifications:false});save();
-}
-
-/* ═══ BOOT ═══ */
-if(!DB.prefs)DB.prefs={sound:true,miniWidget:true,focusMins:25,shortMins:5,longMins:15,light:false,notifications:false};
-if(!DB.notes)DB.notes={};
-seed();
-if(DB.prefs.light)document.body.classList.add('light');
-pomoState.timeLeft=getPD().FOCUS;
-updateTopbar();updatePomoDisplay();renderDash();
-</script>
 </body>
 </html>

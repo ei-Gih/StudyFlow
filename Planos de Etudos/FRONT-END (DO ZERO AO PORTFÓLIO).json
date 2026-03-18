@@ -1,0 +1,61 @@
+{
+  "course": "Frontend Development",
+  "modules": [
+    {
+      "title": "HTML Fundamentals",
+      "topics": [
+        "HTML structure",
+        "Semantic tags",
+        "Forms",
+        "Accessibility basics"
+      ],
+      "tasks": [
+        "Build a personal bio page",
+        "Create a contact form",
+        "Use semantic tags properly"
+      ]
+    },
+    {
+      "title": "CSS Styling",
+      "topics": [
+        "Selectors",
+        "Box model",
+        "Flexbox",
+        "Grid",
+        "Responsive design"
+      ],
+      "tasks": [
+        "Style your bio page",
+        "Create responsive layout",
+        "Build a landing page"
+      ]
+    },
+    {
+      "title": "JavaScript Basics",
+      "topics": [
+        "Variables",
+        "Functions",
+        "Events",
+        "DOM manipulation"
+      ],
+      "tasks": [
+        "Create a to-do list",
+        "Add interactivity to page",
+        "Handle user input"
+      ]
+    },
+    {
+      "title": "Projects for Portfolio",
+      "topics": [
+        "Project structure",
+        "UI/UX basics",
+        "Deployment"
+      ],
+      "tasks": [
+        "Build 3 projects",
+        "Deploy on Netlify",
+        "Create GitHub portfolio"
+      ]
+    }
+  ]
+}

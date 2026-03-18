@@ -1,0 +1,22 @@
+{
+  "plans": [
+    { "id": "plan_english_adv", "title": "Inglês Avançado", "color": "#9c27b0" }
+  ],
+  "modules": [
+    { "id": "em1", "planId": "plan_english_adv", "title": "Fluência" },
+    { "id": "em2", "planId": "plan_english_adv", "title": "Listening Avançado" },
+    { "id": "em3", "planId": "plan_english_adv", "title": "Vocabulário" },
+    { "id": "em4", "planId": "plan_english_adv", "title": "Conversação" }
+  ],
+  "topics": [
+    { "id": "et1", "moduleId": "em1", "title": "Pensar em inglês" },
+    { "id": "et2", "moduleId": "em2", "title": "Filmes sem legenda" },
+    { "id": "et3", "moduleId": "em3", "title": "Expressões naturais" },
+    { "id": "et4", "moduleId": "em4", "title": "Debates" }
+  ],
+  "tasks": [
+    { "id": "etask1", "topicId": "et1", "title": "Pensar o dia inteiro em inglês", "done": false },
+    { "id": "etask2", "topicId": "et2", "title": "Assistir sem legenda", "done": false },
+    { "id": "etask3", "topicId": "et4", "title": "Simular debates", "done": false }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "course": "English - Zero to Conversation",
+  "modules": [
+    {
+      "title": "Foundation Basics",
+      "topics": [
+        "Sentence structure (SVO)",
+        "Verb to be",
+        "Personal pronouns",
+        "Simple present",
+        "Basic vocabulary"
+      ],
+      "tasks": [
+        "Create 10 sentences about your daily life",
+        "Practice speaking sentences out loud",
+        "Listen to beginner English audio daily",
+        "Write simple self-introduction"
+      ]
+    },
+    {
+      "title": "Listening and Pronunciation",
+      "topics": [
+        "English sounds",
+        "Contractions",
+        "Intonation",
+        "Basic listening comprehension"
+      ],
+      "tasks": [
+        "Practice shadowing with short audios",
+        "Repeat sentences 3 times",
+        "Listen without subtitles first",
+        "Imitate pronunciation"
+      ]
+    },
+    {
+      "title": "Speaking Activation",
+      "topics": [
+        "Daily conversation phrases",
+        "Connectors (and, but, because)",
+        "Asking questions",
+        "Answering naturally"
+      ],
+      "tasks": [
+        "Speak about your day for 5 minutes",
+        "Record your voice",
+        "Simulate dialogues",
+        "Answer common questions"
+      ]
+    },
+    {
+      "title": "Real Conversation",
+      "topics": [
+        "Common questions",
+        "Natural responses",
+        "Thinking in English",
+        "Conversation flow"
+      ],
+      "tasks": [
+        "Practice conversation with a partner or AI",
+        "Think in English during the day",
+        "Simulate real-life scenarios",
+        "Answer 20 common questions"
+      ]
+    }
+  ]
+}

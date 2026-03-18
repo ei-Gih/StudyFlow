@@ -1,0 +1,25 @@
+{
+  "plans": [
+    { "id": "plan_backend", "title": "Backend Developer", "color": "#ff9800" }
+  ],
+  "modules": [
+    { "id": "bm1", "planId": "plan_backend", "title": "Fundamentos Web" },
+    { "id": "bm2", "planId": "plan_backend", "title": "APIs" },
+    { "id": "bm3", "planId": "plan_backend", "title": "Banco de Dados" },
+    { "id": "bm4", "planId": "plan_backend", "title": "Projetos" }
+  ],
+  "topics": [
+    { "id": "bt1", "moduleId": "bm1", "title": "HTTP e rotas" },
+    { "id": "bt2", "moduleId": "bm2", "title": "CRUD" },
+    { "id": "bt3", "moduleId": "bm2", "title": "REST API" },
+    { "id": "bt4", "moduleId": "bm3", "title": "SQL" },
+    { "id": "bt5", "moduleId": "bm3", "title": "Modelagem de dados" },
+    { "id": "bt6", "moduleId": "bm4", "title": "API completa" }
+  ],
+  "tasks": [
+    { "id": "btask1", "topicId": "bt1", "title": "Criar servidor simples", "done": false },
+    { "id": "btask2", "topicId": "bt2", "title": "Criar CRUD", "done": false },
+    { "id": "btask3", "topicId": "bt4", "title": "Criar banco de dados", "done": false },
+    { "id": "btask4", "topicId": "bt6", "title": "Projeto API completo", "done": false }
+  ]
+}

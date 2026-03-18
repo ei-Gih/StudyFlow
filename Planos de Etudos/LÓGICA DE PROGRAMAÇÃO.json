@@ -1,0 +1,58 @@
+{
+  "course": "Programming Logic",
+  "modules": [
+    {
+      "title": "Logic Fundamentals",
+      "topics": [
+        "Algorithms",
+        "Flowcharts",
+        "Variables",
+        "Data types"
+      ],
+      "tasks": [
+        "Write simple algorithms",
+        "Solve basic problems",
+        "Use pseudocode"
+      ]
+    },
+    {
+      "title": "Conditionals",
+      "topics": [
+        "If/else",
+        "Switch",
+        "Comparison operators"
+      ],
+      "tasks": [
+        "Build a number checker",
+        "Create decision-based programs",
+        "Solve exercises"
+      ]
+    },
+    {
+      "title": "Loops",
+      "topics": [
+        "For loop",
+        "While loop",
+        "Loop logic"
+      ],
+      "tasks": [
+        "Create repetition programs",
+        "Build multiplication table",
+        "Solve loop challenges"
+      ]
+    },
+    {
+      "title": "Problem Solving",
+      "topics": [
+        "Decomposition",
+        "Pattern recognition",
+        "Optimization"
+      ],
+      "tasks": [
+        "Solve daily challenges",
+        "Practice logic problems",
+        "Refactor solutions"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "plans": [
+    { "id": "plan_projects", "title": "Projetos para Portfólio", "color": "#00bcd4" }
+  ],
+  "modules": [
+    { "id": "pr1", "planId": "plan_projects", "title": "Projetos Frontend" },
+    { "id": "pr2", "planId": "plan_projects", "title": "Projetos Backend" },
+    { "id": "pr3", "planId": "plan_projects", "title": "Projetos Fullstack" }
+  ],
+  "topics": [
+    { "id": "prt1", "moduleId": "pr1", "title": "Landing Page" },
+    { "id": "prt2", "moduleId": "pr2", "title": "API REST" },
+    { "id": "prt3", "moduleId": "pr3", "title": "Sistema completo" }
+  ],
+  "tasks": [
+    { "id": "prtask1", "topicId": "prt1", "title": "Criar landing page", "done": false },
+    { "id": "prtask2", "topicId": "prt2", "title": "Criar API", "done": false },
+    { "id": "prtask3", "topicId": "prt3", "title": "Projeto fullstack", "done": false }
+  ]
+}
