@@ -43,9 +43,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
   border-bottom:1px solid rgba(255,255,255,.06);
 }
 .lp-logo{font-family:'Syne',sans-serif;font-size:8px;font-weight:80;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:-.4px}
-.lp-logo-icon{width:8px;height:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:4px}
+.lp-logo-icon{width:28px;height:28px;flex-shrink:0;border-radius:7px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent}.lp-logo-icon img{width:28px;height:28px;object-fit:contain;display:block}
 .lp-nav-links{display:flex;align-items:center;gap:28px}
-.lp-nav-links a{font-size:13.5px;color:var(--text2);text-decoration:none;transition:color .15s}
+.lp-nav-links a{font-size:12px;color:var(--text2);text-decoration:none;transition:color .15s}
 .lp-nav-links a:hover{color:var(--text)}
 
 /* Botões da landing */
@@ -154,8 +154,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
    APP SHELL — Sidebar e estrutura
 ══════════════════════════════════════ */
 #sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;gap:2px;z-index:10;transition:background .3s,border-color .3s}
-.logo{padding:0 20px 20px;font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);margin-bottom:8px}
-.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.logo{padding:0 20px 16px;font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.5px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);margin-bottom:8px;height:64px;overflow:hidden}
+.logo-icon{width:32px;height:32px;flex-shrink:0;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent}.logo-icon img{width:32px;height:32px;object-fit:contain;display:block}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-size:13.5px;font-weight:400;color:var(--text2);transition:all .15s;position:relative;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
 .nav-item:hover{color:var(--text);background:var(--bg3)}
 .nav-item.active{color:var(--accent);background:rgba(108,142,255,.08);font-weight:500}
